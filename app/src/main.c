@@ -16,6 +16,12 @@ static const struct gpio_dt_spec led1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
 static const struct gpio_dt_spec led2 = GPIO_DT_SPEC_GET(LED2_NODE, gpios);
 static const struct gpio_dt_spec led3 = GPIO_DT_SPEC_GET(LED3_NODE, gpios);
 
+const struct gpio_dt_spec* leds[] = {
+    &led0,
+    &led1,
+    &led2,
+    &led3
+};
 
 void configure_gpio(const struct gpio_dt_spec* LED_ptr)
 {
@@ -23,7 +29,7 @@ void configure_gpio(const struct gpio_dt_spec* LED_ptr)
     {
         exit(-1);
     }
-    int ret = gpio_pin_configure_dt(LED_ptr, GPIO_OUTPUT_ACTIVE);
+    int ret = gpio_pin_configure_dt(LED_ptr, GPIO_OUTPUT_INACTIVE);
     if (ret < 0)
     {
         exit(ret);
@@ -32,24 +38,23 @@ void configure_gpio(const struct gpio_dt_spec* LED_ptr)
 
 int main(void)
 {
-    configure_gpio(&led0);
-    configure_gpio(&led1);
-    configure_gpio(&led2);
-    configure_gpio(&led3);
-    
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        configure_gpio(leds[0]);
+    }
 
     while (1)
     {   
-        gpio_pin_toggle_dt(&led0);
-
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            k_msleep(500);
+            gpio_pin_toggle_dt(leds[i]);
+        }
         k_msleep(500);
-
-        gpio_pin_toggle_dt(&led0);
-        gpio_pin_toggle_dt(&led1);
-        gpio_pin_toggle_dt(&led2);
-        gpio_pin_toggle_dt(&led3);
-
-        k_msleep(500);
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            gpio_pin_toggle_dt(leds[i]);
+        }
     }
 
     return 0;
