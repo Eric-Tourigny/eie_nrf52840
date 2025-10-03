@@ -3,6 +3,7 @@
         "gpio.h": "c",
         "kernel.h": "c",
         "kernel_includes.h": "c",
-        "kernel_structs.h": "c"
+        "kernel_structs.h": "c",
+        "rb.h": "c"
     }
 }
