@@ -1,5 +1,6 @@
 #include <zephyr/smf.h>
 
+#include "BTN.h"
 #include "LED.h"
 #include "my_state_machine.h"
 
@@ -7,18 +8,29 @@
  * Function Prototypes
  *--------------------------------------------------------------------------------------------------------*/
 
-static enum smf_state_result led_on_state_run(void* o);
-static void led_on_state_exit(void* o);
-static enum smf_state_result led_off_state_run(void* o);
-static void led_off_state_exit(void* o);
+static void S1_enter(void* o);
+static void S2_enter(void* o);
+static void S3_enter(void* o);
+static void S4_enter(void* o);
+
+static enum smf_state_result S0_run(void* o);
+static enum smf_state_result S1_run(void* o);
+static enum smf_state_result S2_run(void* o);
+static enum smf_state_result S3_run(void* o);
+static enum smf_state_result S4_run(void* o);
+
+static void clear_LEDs(void* o);
 
 /*----------------------------------------------------------------------------------------------------------
  * Typedefs
  *--------------------------------------------------------------------------------------------------------*/
 
 enum led_state_machine_states {
-    LED_ON_STATE,
-    LED_OFF_STATE
+    S0,
+    S1,
+    S2,
+    S3,
+    S4
 };
 
 typedef struct {
@@ -33,8 +45,11 @@ typedef struct {
  *--------------------------------------------------------------------------------------------------------*/
 
 static const struct smf_state led_states[] = {
-    [LED_ON_STATE] = SMF_CREATE_STATE(NULL, led_on_state_run, led_on_state_exit, NULL, NULL),
-    [LED_OFF_STATE] = SMF_CREATE_STATE(NULL, led_off_state_run, led_off_state_exit, NULL, NULL)
+    [S0] = SMF_CREATE_STATE(NULL, S0_run, NULL, NULL, NULL),
+    [S1] = SMF_CREATE_STATE(S1_enter, S1_run, clear_LEDs, NULL, NULL),
+    [S2] = SMF_CREATE_STATE(S2_enter, S2_run, clear_LEDs, NULL, NULL),
+    [S3] = SMF_CREATE_STATE(S3_enter, S3_run, clear_LEDs, NULL, NULL),
+    [S4] = SMF_CREATE_STATE(S4_enter, S4_run, clear_LEDs, NULL, NULL)
 };
 
 static led_state_object_t led_state_object;
@@ -43,42 +58,85 @@ static led_state_object_t led_state_object;
  * Local Functions
  *--------------------------------------------------------------------------------------------------------*/
 
-static enum smf_state_result led_on_state_run(void* o)
+static enum smf_state_result S0_run()
 {
-    if (led_state_object.count > 500)
+    if (BTN_check_clear_pressed(BTN0))
     {
-        led_state_object.count = 0;
-        smf_set_state(SMF_CTX(&led_state_object), &led_states[LED_OFF_STATE]);
-    }
-    else
-    {
-        led_state_object.count++;
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S1]);
     }
     return SMF_EVENT_HANDLED;
 }
 
-static void led_on_state_exit(void* o)
+static void S1_enter(void* o)
 {
-    LED_set(LED0, LED_OFF);
+    LED_blink(LED0, 4);
 }
 
-static enum smf_state_result led_off_state_run(void* o)
+static enum smf_state_result S1_run()
 {
-    if (led_state_object.count > 500)
+    if (BTN_check_clear_pressed(BTN1))
     {
-        led_state_object.count = 0;
-        smf_set_state(SMF_CTX(&led_state_object), &led_states[LED_ON_STATE]);
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S2]);
     }
-    else
+    if (BTN_check_clear_pressed(BTN2))
     {
-        led_state_object.count++;
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S4]);
+    }
+    if (BTN_check_clear_pressed(BTN3))
+    {
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S0]);
     }
     return SMF_EVENT_HANDLED;
 }
 
-static void led_off_state_exit(void* o)
+
+
+static void S2_enter(void* o)
 {
-    LED_set(LED0, LED_ON);
+
+}
+
+static enum smf_state_result S2_run()
+{
+    if (BTN_check_clear_pressed(BTN3))
+    {
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S0]);
+    }
+    return SMF_EVENT_HANDLED;
+}
+
+static void S3_enter(void* o)
+{
+
+}
+
+static enum smf_state_result S3_run()
+{
+    if (BTN_check_clear_pressed(BTN3))
+    {
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S2]);
+    }
+    return SMF_EVENT_HANDLED;
+}
+
+static void S4_enter(void* o)
+{
+
+}
+
+static enum smf_state_result S4_run()
+{
+    if (BTN_check_clear_pressed(BTN3))
+    {
+        smf_set_state(SMF_CTX(&led_state_object), &led_states[S0]);
+    }
+    return SMF_EVENT_HANDLED;
+}
+
+static void clear_LEDs()
+{
+    LED_set(LED0, 0);
+    LED_set(LED1, 0);
 }
 
 
@@ -89,7 +147,7 @@ static void led_off_state_exit(void* o)
 void state_machine_init()
 {
     led_state_object.count = 0;
-    smf_set_initial(SMF_CTX(&led_state_object), &led_states[LED_ON_STATE]);
+    smf_set_initial(SMF_CTX(&led_state_object), &led_states[S0]);
 }
 
 int state_machine_run()
