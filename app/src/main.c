@@ -7,8 +7,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
-#include "BTN.h"
-#include "LED.h"
+#include "drivers/btn/BTN.h"
+#include "drivers/led/LED.h"
 
 #define SLEEP_MS 1
 
@@ -30,7 +30,6 @@ int main(void) {
       current_duty_cycle = (current_duty_cycle >= 100) ? 0 : current_duty_cycle + 10; 
       printk("Setting LED0 to %d%% brightness\n", current_duty_cycle);
       LED_pwm(LED0, current_duty_cycle);
-
     }
     k_msleep(SLEEP_MS);
   }
