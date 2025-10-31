@@ -7,8 +7,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
-#include "drivers/btn/BTN.h"
-#include "drivers/led/LED.h"
+#include "BTN.h"
+#include "LED.h"
 
 #define SLEEP_MS 1
 
