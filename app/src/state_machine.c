@@ -1,7 +1,7 @@
 #include <zephyr/smf.h>
 
-#include "drivers/LED/LED.h"
-#include "drivers/BTN/BTN.h"
+#include "LED.h"
+#include "BTN.h"
 #include "printk.h"
 #include "state_machine.h"
 
@@ -165,5 +165,5 @@ void init_state_machine()
 
 int run_state_machine()
 {
-
+    return 0;
 }
