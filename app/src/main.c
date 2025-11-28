@@ -4,6 +4,9 @@
 
 /* IMPORTS -------------------------------------------------------------------------------------- */
 
+#include "LED.h"
+#include "BTN.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <zephyr/bluetooth/bluetooth.h>
@@ -18,7 +21,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/printk.h>
-#include "LED.h"
 
 /* MACROS --------------------------------------------------------------------------------------- */
 
@@ -55,6 +57,8 @@ static const struct bt_data ble_scan_response_data[] = {
 static uint8_t ble_custom_characteristic_user_data[BLE_CUSTOM_CHARACTERISTIC_MAX_DATA_LENGTH + 1] =
     {'E', 'i', 'E'};
 
+static enum led_state_t led0_state = LED_OFF;
+
 /* BLE SERVICE SETUP ---------------------------------------------------------------------------- */
 
 BT_GATT_SERVICE_DEFINE(
@@ -84,7 +88,7 @@ static ssize_t ble_custom_service_read(struct bt_conn* conn, const struct bt_gat
                                        void* buf, uint16_t len, uint16_t offset) {
   // Send the data that is stored in the characteristic ("EiE" by default, can change if written to)
   // by fetching it directly from the characteristic object
-  const char* data_to_send_to_connected_device = attr->user_data;
+  const char* data_to_send_to_connected_device = led0_state == LED_ON ? "ON" : "OFF";
 
   return bt_gatt_attr_read(conn, attr, buf, len, offset, data_to_send_to_connected_device,
                            strlen(data_to_send_to_connected_device));
@@ -105,10 +109,12 @@ static ssize_t ble_custom_service_write(struct bt_conn* conn, const struct bt_ga
 
   if (strcmp(value, "LED ON") == 0)
   {
+    led0_state = LED_ON;
     LED_set(LED0, 1);
   }
   else if (strcmp(value, "LED OFF") == 0)
   {
+    led0_state = LED_OFF;
     LED_set(LED0, 0);
   }
 
@@ -133,6 +139,9 @@ int main(void) {
   if (0 > LED_init()) {
     return 0;
   }
+  if (0 > BTN_init()) {
+    return 0;
+  }
 
   int err = bt_enable(NULL);
   if (err) {
@@ -151,7 +160,9 @@ int main(void) {
   }
 
   while (1) {
-    k_sleep(K_MSEC(1000));
-    ble_custom_service_notify();
+    if (BTN_check_clear_pressed(BTN0)) {
+      ble_custom_service_notify();
+    }
+    k_sleep(K_MSEC(1));
   }
 }
