@@ -97,12 +97,32 @@ static ssize_t ble_custom_characteristic_simple_write_cb(struct bt_conn* conn, c
  ******************************************************************************************************************************************************/
 
 int main(void) {
-  if (0 > BTN_init()) {
+  int err;
+
+  err = bt_enable(NULL);                              // Enable BLE synchronously
+  if (err != 0)                                       // If any error code, print it and quit
+  {
+    printk("BLE Initialization Error - %d", err);
     return 0;
   }
-  if (0 > LED_init()) {
+
+  err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ble_advertising_data, ARRAY_SIZE(ble_advertising_data), NULL, 0);    // Start BLE peripheral advertising
+  if (err != 0)                                                                                                     // If any error code, print it and quit
+  {
+    printk("BLE Advertise Start Error - %d", err);
     return 0;
   }
+
+  /*
+  if (BTN_init() < 0)         // Enable buttons and check for any errors
+  {
+    return 0;
+  }
+  if (LED_init() < 0)         // Enable LEDs and check for any errors
+  {
+    return 0;
+  }
+  */
 
   while(1) {
     k_msleep(SLEEP_MS);
