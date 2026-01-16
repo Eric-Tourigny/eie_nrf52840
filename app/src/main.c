@@ -30,8 +30,8 @@
  ******************************************************************************************************************************************************/
 
 static const struct bt_uuid_128 ble_custom_service_uuid = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0xa3800744, 0x579b, 0xfdab, 0x6b41, 0xcf689a763abf));
-static const struct bt_uuid_128 ble_custom_characteristic_1_uuid = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x0f23685f, 0xf0b3, 0xd1c5, 0xf407, 0xcca1454ca47a));
-static const struct bt_uuid_128 ble_custom_characteristic_2_uuid = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0xb36dee99, 0xddf7, 0x9994, 0x2cb3, 0x518c3b0abd5e));
+static const struct bt_uuid_128 ble_custom_characteristic_reader_uuid = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x0f23685f, 0xf0b3, 0xd1c5, 0xf407, 0xcca1454ca47a));
+static const struct bt_uuid_128 ble_custom_characteristic_writer_uuid = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0xb36dee99, 0xddf7, 0x9994, 0x2cb3, 0x518c3b0abd5e));
 
 /******************************************************************************************************************************************************
  * Define the advertising data
@@ -48,8 +48,7 @@ static const struct bt_data ble_advertising_data[] = {
  ******************************************************************************************************************************************************/
 
 #define BLE_CUSTOM_CHARACTERISTIC_MAX_DATA_LENGTH 20                                                                  // Size of the custom characteristic data
-static uint8_t ble_custom_characteristic_1_user_data[BLE_CUSTOM_CHARACTERISTIC_MAX_DATA_LENGTH + 1] = {};                   // Initial contents of custom characteristic 1
-static uint8_t ble_custom_characteristic_2_user_data[BLE_CUSTOM_CHARACTERISTIC_MAX_DATA_LENGTH + 1] = {};                   // Initial contents of custom characteristic 2
+static uint8_t ble_custom_characteristic_user_data[BLE_CUSTOM_CHARACTERISTIC_MAX_DATA_LENGTH + 1] = {};                   // Initial contents of custom characteristic
 
 static ssize_t ble_custom_characteristic_simple_read_cb(struct bt_conn* conn, const struct bt_gatt_attr* attr, void* buf, uint16_t len, uint16_t offset);
 static ssize_t ble_custom_characteristic_simple_write_cb(struct bt_conn* conn, const struct bt_gatt_attr* attr, const void* buf, uint16_t len, uint16_t offset, uint8_t flags);
@@ -63,21 +62,21 @@ BT_GATT_SERVICE_DEFINE(
   BT_GATT_PRIMARY_SERVICE(&ble_custom_service_uuid),    // The UID for the service
   BT_GATT_CHARACTERISTIC                                // The first characteristic in the service
   (                              
-    &ble_custom_characteristic_1_uuid.uuid,                     // The characteristic's UID
-    BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE,                   // Allow the characteristic to be read and written
-    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                   // Allow connecting devices to read and write the characteristic
-    ble_custom_characteristic_simple_read_cb,                 // Function to call on characteristic read
-    ble_custom_characteristic_simple_write_cb,                // Function to call on characteristic write
-    ble_custom_characteristic_1_user_data                       // The initial data stored in the characteristic
+    &ble_custom_characteristic_reader_uuid.uuid,                      // The characteristic's UID
+    BT_GATT_CHRC_READ,                                                // Allow the characteristic to be read
+    BT_GATT_PERM_READ,                                                // Allow connecting devices to read the characteristic
+    ble_custom_characteristic_simple_read_cb,                         // Function to call on characteristic read
+    ble_custom_characteristic_simple_write_cb,                        // Function to call on characteristic write
+    ble_custom_characteristic_user_data                             // The initial data stored in the characteristic
   ),
   BT_GATT_CHARACTERISTIC                                // The second characteristic in the service
   (                              
-    &ble_custom_characteristic_2_uuid.uuid,                   // The characteristic's UID
-    BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE,                   // Allow the characteristic to be read and written
-    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                   // Allow connecting devices to read and write the characteristic
+    &ble_custom_characteristic_writer_uuid.uuid,                   // The characteristic's UID
+    BT_GATT_CHRC_WRITE,                   // Allow the characteristic to be read and written
+    BT_GATT_PERM_WRITE,                   // Allow connecting devices to read and write the characteristic
     ble_custom_characteristic_simple_read_cb,                 // Function to call on characteristic read
     ble_custom_characteristic_simple_write_cb,                // Function to call on characteristic write
-    ble_custom_characteristic_2_user_data                       // The initial data stored in the characteristic
+    ble_custom_characteristic_user_data                       // The initial data stored in the characteristic
   )
 );
 
