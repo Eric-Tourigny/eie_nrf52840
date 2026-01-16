@@ -63,11 +63,16 @@ BT_GATT_SERVICE_DEFINE(
   BT_GATT_CHARACTERISTIC                                // The first characteristic in the service
   (                              
     &ble_custom_characteristic_reader_uuid.uuid,                      // The characteristic's UID
-    BT_GATT_CHRC_READ,                                                // Allow the characteristic to be read
+    BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,                                                // Allow the characteristic to be read
     BT_GATT_PERM_READ,                                                // Allow connecting devices to read the characteristic
     ble_custom_characteristic_simple_read_cb,                         // Function to call on characteristic read
     ble_custom_characteristic_simple_write_cb,                        // Function to call on characteristic write
     ble_custom_characteristic_user_data                             // The initial data stored in the characteristic
+  ),
+  BT_GATT_CCC                                           // Client characteristic configuration for the above custom characteristic
+  (
+    NULL,                                                           // Callback for the characteristic being changed
+    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE                          // Permissions for the client
   ),
   BT_GATT_CHARACTERISTIC                                // The second characteristic in the service
   (                              
@@ -77,6 +82,11 @@ BT_GATT_SERVICE_DEFINE(
     ble_custom_characteristic_simple_read_cb,                 // Function to call on characteristic read
     ble_custom_characteristic_simple_write_cb,                // Function to call on characteristic write
     ble_custom_characteristic_user_data                       // The initial data stored in the characteristic
+  ),
+  BT_GATT_CCC                                           // Client characteristic configuration for the above custom characteristic
+  (
+    NULL,                                                           // Callback for the characteristic being changed
+    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE                          // Permissions for the client
   )
 );
 
@@ -101,6 +111,12 @@ static ssize_t ble_custom_characteristic_simple_write_cb(struct bt_conn* conn, c
 
   memcpy(write_location, buf + offset, len);                         // Copy the data into the attribute
   write_location[offset + len] = '\0';                               // Set null terminator
+
+  printk("%s", ble_custom_characteristic_user_data);
+  printk("%d", ble_custom_service.attr_count);
+
+  bt_gatt_notify(NULL, &ble_custom_service.attrs[2], ble_custom_characteristic_user_data, strlen(ble_custom_characteristic_user_data));
+ 
   return len;                                                         // Return the length written
 }
 
