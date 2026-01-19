@@ -24,10 +24,15 @@
 #include "BTN.h"
 #include "LED.h"
 
+/***************************************************************************************************************************************
+ * Defines
+ ***************************************************************************************************************************************/
+
 #define SLEEP_MS 1
+#define SERVER_NAME "EiE Central 5666"
 
 /***************************************************************************************************************************************
- * Define Globals
+ * Global Variables
  ***************************************************************************************************************************************/
 
 static struct bt_uuid_128 ble_custom_service_id = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x00000000, 0x1111, 0x2222, 0x3333, 0x000000000000));
@@ -41,6 +46,8 @@ static struct bt_conn* ble_connection;
 
 static void ble_on_device_connected(struct bt_conn* conn, uint8_t err);
 static void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason);
+static void ble_on_advertisement_received(const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple *buf);
+static bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data);
 
 
 /***************************************************************************************************************************************
@@ -85,6 +92,51 @@ void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason) {
   kprint("Disconnected - %s", bt_hci_err_to_str(reason));
 }
 
+void ble_on_advertisement_received(const bt_addr_le_t *addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple *buf) {
+  if (ble_connection == NULL) {
+    return;
+  }
+  if (adv_type != BT_GAP_ADV_TYPE_ADV_IND && adv_type != BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
+    return;
+  }
+
+  char name[32];  
+  bt_data_parse(buf, ble_get_adv_device_name_cb, name);
+
+  char mac_address[BT_ADDR_LE_STR_LEN];
+  bt_addr_le_to_str(bt_conn_get_dst(conn), mac_address, sizeof(mac_address));
+  printk("Received Advertisement: %s\n", mac_address);
+  printk("Device name: %s", name);
+  printk("Signal Strength %d", rssi);
+
+  // Do not connect if the signal strength is poor
+  if (rssi < -50) {
+    return;         
+  }
+
+  // Do not connect to anything except the named server
+  if (name != SERVER_NAME) {
+    return;
+  }
+
+  // Create a connection to addr and store its data in ble_connection
+  if (bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_DEFAULT, &ble_connection) != 0) {
+    printk("BLE connection creation error - %d", err);
+    ble_connection = NULL;
+  }
+}
+
+bool ble_get_adv_device_name_cb(struct bt_data* data, void* name) {
+  if (data->type == BT_DATA_NAME_COMPLETE || data->type == BT_DATA_NAME_SHORTENED) {
+    memcpy(data->data, name, data->data_len)
+    name[data->data_len] = '\0';
+    return false;                   // End parsing
+  }
+  return true;                      // Continue parsing
+}
+
+
+
 int main(void) {
 
   /*
@@ -96,8 +148,21 @@ int main(void) {
   }
   */
 
-  while(1) {
-    k_msleep(SLEEP_MS);
+  int err;
+
+  err = bt_enable(NULL);
+  if (err != 0) {
+    printk("BLE Initialization Error - %d", err);
+    return;
+  } else {
+    printk("Bluetooth Initialized");
   }
-	return 0;
+
+  err = bt_le_scan_start(BT_LE_SCAN_PASSIVE, ble_on_advertisement_received);
+  if (err != 0) {
+    printk("BLE Scan Start Error - %d");
+    return;
+  }
+
+  k_sleep(K_FOREVER);
 }
