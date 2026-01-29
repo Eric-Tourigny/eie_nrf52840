@@ -92,9 +92,9 @@ int main(void) {
   //lcd_cmd(0x36, &rgb_order_buf);
 
   uint8_t col_base = 0x95;
-  uint8_t cols = 20;
+  uint8_t cols = 10;
   uint8_t row_base = 0x75;
-  uint8_t rows = 20;
+  uint8_t rows = 10;
 
   uint8_t column_data[] = {0x00, col_base, 0x00, col_base + cols};
   uint8_t row_data[] = {0x00, row_base, 0x00, row_base + rows};
@@ -103,9 +103,9 @@ int main(void) {
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       int base_index = (i * cols + j) * 3;
-      color_data[base_index + 0] = 0xff;
+      color_data[base_index + 0] = (i + j) * 15;
       color_data[base_index + 1] = 0x00;
-      color_data[base_index + 2] = 0x00;
+      color_data[base_index + 2] = 300 - (i + j) * 15;
     }
   }
 
