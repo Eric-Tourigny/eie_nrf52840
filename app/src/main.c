@@ -15,6 +15,13 @@
 
 #define SLEEP_MS 1
 
+#define COLUMN_MAX 0x13f
+#define ROW_MAX 0xef
+
+#define I_BLUE 0
+#define I_GREEN 1
+#define I_RED 2
+
 #define CMD_SOFTWARE_RESET 0x01
 #define CMD_SLEEP_OUT 0x11
 #define CMD_DISPLAY_ON 0x29
@@ -38,6 +45,8 @@ static const struct spi_config spi_cfg = {
   .slave = 0,
   .cs = cs_ctrl
 };
+
+static uint8_t pixel_values[COLUMN_MAX + 1][ROW_MAX + 1][3];
 
 static void lcd_cmd(uint8_t cmd, struct spi_buf * data) {
   struct spi_buf cmd_buf[1] = {
@@ -70,6 +79,34 @@ static void lcd_cmd(uint8_t cmd, struct spi_buf * data) {
 
 }
 
+void set_pixel(uint16_t row, uint16_t col, uint8_t r, uint8_t g, uint8_t b)
+{
+  uint8_t row_data[] = {row >> 8, row, row >> 8, row};
+  uint8_t column_data[] = {col >> 8, col, col >> 8, col};
+  uint8_t color_data[] = {b, g, r};
+
+  struct spi_buf row_data_buf = {row_data, 4};
+  struct spi_buf column_data_buf = {column_data, 4};
+  struct spi_buf color_data_buf = {color_data, 3};
+
+  lcd_cmd(CMD_ROW_ADDRESS_SET, &row_data_buf);
+  lcd_cmd(CMD_COLUMN_ADDRESS_SET, &column_data_buf);
+  lcd_cmd(CMD_MEMORY_WRITE, &color_data_buf);
+}
+
+void write_area(uint16_t row_start, uint16_t row_end, uint16_t col_start, uint16_t col_end, void* values) {
+  uint8_t row_data[] = {row_start >> 8, row_start, row_end >> 8, row_end};
+  uint8_t column_data[] = {col_start >> 8, col_start, col_end >> 8, col_end};
+
+  struct spi_buf row_data_buf = {row_data, 4};
+  struct spi_buf column_data_buf = {column_data, 4};
+  struct spi_buf color_values = {values, (row_end - row_start + 1) * (col_end - col_start + 1) * 3};
+
+  lcd_cmd(CMD_COLUMN_ADDRESS_SET, &row_data_buf);
+  lcd_cmd(CMD_ROW_ADDRESS_SET, &column_data_buf);
+  lcd_cmd(CMD_MEMORY_WRITE, &color_values);
+}
+
 int main(void) {
   if (gpio_pin_configure_dt(&dcx_gpio, GPIO_OUTPUT_LOW)) {
     return 0;
@@ -87,35 +124,29 @@ int main(void) {
   lcd_cmd(CMD_SLEEP_OUT, NULL);
   lcd_cmd(CMD_DISPLAY_ON, NULL);
 
-  //uint8_t rgb_order_data[1] = {0};
-  //struct spi_buf rgb_order_buf = {rgb_order_data, 1};
-  //lcd_cmd(0x36, &rgb_order_buf);
-
-  uint8_t col_base = 0x95;
-  uint8_t cols = 10;
-  uint8_t row_base = 0x75;
-  uint8_t rows = 10;
-
-  uint8_t column_data[] = {0x00, col_base, 0x00, col_base + cols};
-  uint8_t row_data[] = {0x00, row_base, 0x00, row_base + rows};
-  uint8_t color_data[rows * cols * 3];
-
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < cols; j++) {
-      int base_index = (i * cols + j) * 3;
-      color_data[base_index + 0] = (i + j) * 15;
-      color_data[base_index + 1] = 0x00;
-      color_data[base_index + 2] = 300 - (i + j) * 15;
+#if 1
+  for (int row = 0; row <= ROW_MAX; row++) {
+    for (int col = 0; col <= COLUMN_MAX; col++) {
+      pixel_values[col][row][I_BLUE] = 0xff - (row + col) * 0xff / (ROW_MAX + COLUMN_MAX);
     }
   }
+#endif
+#if 1
+  for (int row = 0; row <= ROW_MAX; row++) {
+    for (int col = 0; col <= COLUMN_MAX; col++) {
+      pixel_values[col][row][I_RED] = 0xff - ((ROW_MAX - row) + col) * 0xff / (ROW_MAX + COLUMN_MAX);
+    }
+  }
+#endif
+#if 1
+  for (int row = 0; row <= ROW_MAX; row++) {
+    for (int col = 0; col <= COLUMN_MAX; col++) {
+      pixel_values[col][row][I_GREEN] = col * 0xff / (COLUMN_MAX);
+    }
+  }
+#endif
 
-  struct spi_buf column_data_buf = {column_data, 4};
-  struct spi_buf row_data_buf = {row_data, 4};
-  struct spi_buf color_data_buf = {color_data, rows * cols * 3};
-
-  lcd_cmd(CMD_COLUMN_ADDRESS_SET, &column_data_buf);
-  lcd_cmd(CMD_ROW_ADDRESS_SET, &row_data_buf);
-  lcd_cmd(CMD_MEMORY_WRITE, &color_data_buf);
+  write_area(0, ROW_MAX, 0, COLUMN_MAX, pixel_values);
 
 
 
