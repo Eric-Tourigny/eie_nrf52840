@@ -20,6 +20,7 @@
 #endif
 
 #define SLEEP_MS 1
+#define NUM_BUTTONS 4
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 static lv_obj_t *screen = NULL;
@@ -43,11 +44,15 @@ int main(void) {
     return 0;
   }
   
-  lv_color_t c = lv_color_make(255, 0, 0);
-  lv_obj_set_style_text_color(screen, c, LV_PART_MAIN);
+  for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
+    lv_obj_t *button = lv_button_create(screen);    // Create button as child of screen
+    lv_obj_align(button, LV_ALIGN_CENTER, i % 2 ? 50 : -50, i < 2 ? -20 : 20);
 
-  lv_obj_t *label = lv_label_create(screen);
-  lv_label_set_text(label, "Hello World!");
+    lv_obj_t *label = lv_label_create(button);      // Create label for button
+    char label_text[10];                            // Text for coin's label
+    sprintf(label_text, "Button %u", i + 1);        // Write text into buffer
+    lv_label_set_text(label, label_text);           // Set label text
+  }
 
 
   display_blanking_off(display_dev);
