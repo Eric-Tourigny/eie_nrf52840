@@ -16,7 +16,7 @@
 #include "lv_data_obj.h"
 
 #ifdef __INTELLISENSE__
-#include <modules/lib/gui/lvgl/lvgl.h>
+  #include <modules/lib/gui/lvgl/lvgl.h>
 #endif
 
 #define SLEEP_MS 1
@@ -24,6 +24,11 @@
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 static lv_obj_t *screen = NULL;
+
+void button_callback(lv_event_cb_t *event) {
+  
+  printk("Button pressed\n");
+}
 
 int main(void) {
   if (0 > BTN_init()) {
@@ -46,7 +51,8 @@ int main(void) {
   
   for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
     lv_obj_t *button = lv_button_create(screen);    // Create button as child of screen
-    lv_obj_align(button, LV_ALIGN_CENTER, i % 2 ? 50 : -50, i < 2 ? -20 : 20);
+    lv_obj_align(button, LV_ALIGN_CENTER, i % 2 ? 50 : -50, i < 2 ? -20 : 20);  // Align in 2x2 grid
+    lv_obj_add_event_cb(button, button_callback, LV_EVENT_CLICKED, NULL);
 
     lv_obj_t *label = lv_label_create(button);      // Create label for button
     char label_text[10];                            // Text for coin's label
