@@ -19,7 +19,7 @@
   #include <modules/lib/gui/lvgl/lvgl.h>
 #endif
 
-#define SLEEP_MS 1
+#define SLEEP_MS 100
 #define NUM_BUTTONS 4
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
@@ -71,7 +71,10 @@ int main(void) {
 
   lv_screen_load(buttonScreen);
 
+  uint8_t y = 0;
   while (1) {
+    lv_obj_align(image, LV_ALIGN_CENTER, 0, y);
+    y++;
     lv_timer_handler();
     k_msleep(SLEEP_MS);
   }
