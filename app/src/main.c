@@ -25,9 +25,10 @@
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));
 static lv_obj_t *screen = NULL;
 
-void button_callback(lv_event_cb_t *event) {
-  
-  printk("Button pressed\n");
+void button_callback(lv_event_t *event) {
+  lv_obj_t* data_obj = (lv_obj_t*) lv_event_get_user_data(event);
+  uint8_t* user_data = (uint8_t*) lv_data_obj_get_data_ptr(data_obj);
+  printk("Button %u Pressed\n", *user_data);
 }
 
 int main(void) {
@@ -50,13 +51,14 @@ int main(void) {
   }
   
   for (uint8_t i = 0; i < NUM_BUTTONS; i++) {
-    lv_obj_t *button = lv_button_create(screen);    // Create button as child of screen
-    lv_obj_align(button, LV_ALIGN_CENTER, i % 2 ? 50 : -50, i < 2 ? -20 : 20);  // Align in 2x2 grid
-    lv_obj_add_event_cb(button, button_callback, LV_EVENT_CLICKED, NULL);
+    lv_obj_t *button = lv_button_create(screen);                                        // Create button as child of screen
+    lv_obj_align(button, LV_ALIGN_CENTER, i % 2 ? 50 : -50, i < 2 ? -20 : 20);          // Align in 2x2 grid
+    lv_obj_t* user_data = lv_data_obj_create_alloc_assign(button, &i, sizeof(i));       // Associate button number information with button
+    lv_obj_add_event_cb(button, button_callback, LV_EVENT_CLICKED, user_data);          // Add callback function on button press
 
     lv_obj_t *label = lv_label_create(button);      // Create label for button
-    char label_text[10];                            // Text for coin's label
-    sprintf(label_text, "Button %u", i + 1);        // Write text into buffer
+    char label_text[11];                            // Text for coin's label
+    sprintf(label_text, "Button %u", i);        // Write text into buffer
     lv_label_set_text(label, label_text);           // Set label text
   }
 
