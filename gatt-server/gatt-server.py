@@ -6,6 +6,8 @@ https://github.com/kevincar/bless/blob/master/examples/gattserver.py
 
 import logging
 import asyncio
+import itertools
+import time
 
 from typing import Any
 
@@ -51,6 +53,7 @@ async def run(loop):
                 "Properties": (
                       GATTCharacteristicProperties.read
                     | GATTCharacteristicProperties.write
+                    | GATTCharacteristicProperties.notify
                 ),
                 "Permissions": (
                       GATTAttributePermissions.readable
@@ -68,11 +71,22 @@ async def run(loop):
 
     return server
 
+async def update(server: BlessServer):
+    characteristic = server.get_characteristic(BLE_CUSTOM_CHARACTERISTIC_ID)
+    if characteristic is None:
+        logger.debug("Characteristic not found")
+        return
+    for i in itertools.count():
+        time.sleep(1)
+        characteristic.value = bytearray(f"Hello World - {i}".encode())
+        server.update_value(BLE_CUSTOM_SERVICE_ID, BLE_CUSTOM_CHARACTERISTIC_ID)
+
+
 async def main():
     loop = asyncio.get_event_loop()
     try:
         server = await run(loop)
-        await asyncio.Event().wait()
+        await update(server)
     except asyncio.CancelledError:
         logger.debug("Stopping Server")
         await server.stop()
