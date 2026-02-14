@@ -129,11 +129,18 @@ void ble_on_advertisement_received(const bt_addr_le_t *addr, int8_t rssi, uint8_
     printk("Signal Strength: %d\n", rssi);
   }
 
+  int err = bt_le_scan_stop();
+  if (err != 0) {
+    printk("Error stoping BLE scan - %d\n", err);
+    return;
+  }
+
   // Create a connection to addr and store its data in ble_connection
-  int err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_DEFAULT, &ble_connection);
+  err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_DEFAULT, &ble_connection);
   if (err != 0) {
     printk("BLE connection creation error - %d\n", err);
     ble_connection = NULL;
+    return;
   }
 
   printk("Connection Established\n");
