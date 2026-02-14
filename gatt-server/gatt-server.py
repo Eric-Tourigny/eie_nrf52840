@@ -1,85 +1,81 @@
 """
-Example for a BLE 4.0 Server
+EiE Test GATT Server, based on the bless GATT server examples:
+https://github.com/kevincar/bless/blob/master/examples/server.py
+https://github.com/kevincar/bless/blob/master/examples/gattserver.py
 """
 
-import sys
 import logging
 import asyncio
-import threading
 
-from typing import Any, Union
+from typing import Any
 
-from bless import (  # type: ignore
-    BlessServer,
-    BlessGATTCharacteristic,
-    GATTCharacteristicProperties,
-    GATTAttributePermissions,
-)
+from bless import BlessServer, BlessGATTCharacteristic, GATTCharacteristicProperties, GATTAttributePermissions   # type: ignore
 
+
+def BT_UUID_128_ENCODE(a, b, c, d, e):
+    """Convenience function to encode UUID in same manner as C Macro"""
+    return f"{a:08x}-{b:04x}-{c:04x}-{d:04x}-{e:012x}"
+
+# Define device name
+SERVER_NAME = "EiE 5666 Test GATT Server"
+
+# Define service and characteristic UUIDs
+BLE_CUSTOM_SERVICE_ID = BT_UUID_128_ENCODE(0x00000000, 0x1111, 0x2222, 0x3333, 0x000000000000)
+BLE_CUSTOM_CHARACTERISTIC_ID = BT_UUID_128_ENCODE(0x00000000, 0x1111, 0x2222, 0x3333, 0x000000000001)
+
+# Configure Logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(name=__name__)
 
-# NOTE: Some systems require different synchronization methods.
-trigger: Union[asyncio.Event, threading.Event]
-if sys.platform in ["darwin", "win32"]:
-    trigger = threading.Event()
-else:
-    trigger = asyncio.Event()
 
-
+# Characteristic read callback function
 def read_request(characteristic: BlessGATTCharacteristic, **kwargs) -> bytearray:
     logger.debug(f"Reading {characteristic.value}")
     return characteristic.value
 
-
+# Characteristic write callback function
 def write_request(characteristic: BlessGATTCharacteristic, value: Any, **kwargs):
     characteristic.value = value
     logger.debug(f"Char value set to {characteristic.value}")
-    if characteristic.value == b"\x0f":
-        logger.debug("NICE")
-        trigger.set()
 
 
 async def run(loop):
-    trigger.clear()
-    # Instantiate the server
-    my_service_name = "Test Service"
-    server = BlessServer(name=my_service_name, loop=loop)
-    server.read_request_func = read_request
-    server.write_request_func = write_request
+    server = BlessServer(name=SERVER_NAME, loop=loop)   # Instantiate the server
+    server.read_request_func = read_request                             # Callback function to handle read request on any characteristic
+    server.write_request_func = write_request                           # Callback function to handle write request on any characteristic
 
-    # Add Service
-    my_service_uuid = "A07498CA-AD5B-474E-940D-16F1FBE7E8CD"
-    await server.add_new_service(my_service_uuid)
+    # Define tree of GATT services and characteristics
+    gatt_tree = {
+        BLE_CUSTOM_SERVICE_ID: {
+            BLE_CUSTOM_CHARACTERISTIC_ID: {
+                "Properties": (
+                      GATTCharacteristicProperties.read
+                    | GATTCharacteristicProperties.write
+                ),
+                "Permissions": (
+                      GATTAttributePermissions.readable
+                    | GATTAttributePermissions.writeable
+                ),
+                "Value": None
+            }
+        }
+    }
+    await server.add_gatt(gatt_tree)
 
-    # Add a Characteristic to the service
-    my_char_uuid = "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B"
-    char_flags = (
-        GATTCharacteristicProperties.read
-        | GATTCharacteristicProperties.write
-        | GATTCharacteristicProperties.indicate
-    )
-    permissions = GATTAttributePermissions.readable | GATTAttributePermissions.writeable
-    await server.add_new_characteristic(
-        my_service_uuid, my_char_uuid, char_flags, None, permissions
-    )
-
-    logger.debug(server.get_characteristic(my_char_uuid))
+    logger.debug("Starting Server")
     await server.start()
     logger.debug("Advertising")
-    logger.info(f"Write '0xF' to the advertised characteristic: {my_char_uuid}")
-    if trigger.__module__ == "threading":
-        trigger.wait()
-    else:
-        await trigger.wait()
 
-    await asyncio.sleep(2)
-    logger.debug("Updating")
-    server.get_characteristic(my_char_uuid)
-    server.update_value(my_service_uuid, "51FF12BB-3ED8-46E5-B4F9-D64E2FEC021B")
-    await asyncio.sleep(5)
-    await server.stop()
+    return server
 
+async def main():
+    loop = asyncio.get_event_loop()
+    try:
+        server = await run(loop)
+        await asyncio.Event().wait()
+    except asyncio.CancelledError:
+        logger.debug("Stopping Server")
+        await server.stop()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(run(loop))
+if __name__ == "__main__":
+    asyncio.run(main())

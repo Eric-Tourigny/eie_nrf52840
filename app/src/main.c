@@ -29,7 +29,7 @@
  ***************************************************************************************************************************************/
 
 #define SLEEP_MS 1
-#define PERIPHRAL_NAME "EiE Periphral"
+#define PERIPHERAL_NAME "DESKTOP-9ENFI6B"
 
 /***************************************************************************************************************************************
  * Global Variables
@@ -106,15 +106,15 @@ void ble_on_advertisement_received(const bt_addr_le_t *addr, int8_t rssi, uint8_
   }
   */
 
-  char name[32] = {0};  
-  bt_data_parse(buf, ble_get_adv_device_name_cb, name);
-
   char mac_address[BT_ADDR_LE_STR_LEN];
   bt_addr_le_to_str(addr, mac_address, sizeof(mac_address));
   printk("Received Advertisement: %s\n", mac_address);
 
+  char name[32] = {0};  
+  bt_data_parse(buf, ble_get_adv_device_name_cb, name);
+
   // Do not connect to anything except the named server
-  if (strcmp(name, PERIPHRAL_NAME) != 0) {
+  if (strcmp(name, PERIPHERAL_NAME) != 0) {
     printk("Invalid Device Name - %s\n", name);
     return;
   } else {
@@ -136,7 +136,7 @@ void ble_on_advertisement_received(const bt_addr_le_t *addr, int8_t rssi, uint8_
     ble_connection = NULL;
   }
 
-  printk("Connection Established");
+  printk("Connection Established\n");
 }
 
 bool ble_get_adv_device_name_cb(struct bt_data *data, void *user_data) {
@@ -172,7 +172,7 @@ int main(void) {
     printk("Bluetooth Initialized\n");
   }
 
-  err = bt_le_scan_start(BT_LE_SCAN_PASSIVE, ble_on_advertisement_received);
+  err = bt_le_scan_start(BT_LE_SCAN_ACTIVE_CONTINUOUS, ble_on_advertisement_received);
   if (err != 0) {
     printk("BLE Scan Start Error - %d", err);
     return err;
