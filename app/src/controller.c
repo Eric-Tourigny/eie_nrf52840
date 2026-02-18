@@ -22,7 +22,7 @@
  * Defines
  ***************************************************************************************************************************************/
 
-#define PERIPHERAL_NAME "DESKTOP-9ENFI6B"
+#define PERIPHERAL_NAME "EiE 5666 Test GATT Server"
 #define MIN_RSSI -50
 
 
@@ -32,7 +32,7 @@
 
 /*
  * Callback function for when a BLE advertisement is received.
- * If the connection to the controller (`ble_connection`) is not already established, the device is connectable, the advertised name matches `PERIPHERAL_NAME`, and
+ * If the connection to the controller (`ble_connection`) is not already established, checks if the advertised name matches `PERIPHERAL_NAME`, and
  * the signal strength (rssi) is greater than `MIN_RSSI`, it creates a connection and stops scanning for connection requests.
  */
 static void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple* buf);
@@ -101,15 +101,9 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple* buf) {
     if (ble_connection != NULL) {                                               // If a connection has already been or is being established
+        printk("Advertisement ignored - BLE connection already established\n");
         return;                                                                         // Ignore the advertisement
     }
-
-    if (adv_type != BT_GAP_ADV_TYPE_ADV_IND && 
-        adv_type != BT_GAP_ADV_TYPE_ADV_DIRECT_IND)                             // If the advertisement type is not connectable   
-    {                           
-        return;                                                                         // Ignore the advertisement
-    }
-
     
     char mac_address[BT_ADDR_LE_STR_LEN];                                       // Buffer to hold MAC address
     bt_addr_le_to_str(addr, mac_address, sizeof(mac_address));                  // Extract MAC address into buffer
@@ -117,36 +111,37 @@ void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_
     char name[32] = {'\0'};                                                     // Buffer to hold the device name                                                              
     bt_data_parse(buf, ble_get_adv_device_name_cb, name);                       // Extract device name from advertising data, if present
 
-    printk("Received advertisement from %s (device name: %s)", mac_address, name);
+    printk("Received advertisement from %s (device name: %s)\n", mac_address, name);
 
     if (strcmp(name, PERIPHERAL_NAME) != 0) {                                   // If the device name doesn't match the set PERIPHERAL_NAME
         return;                                                                         // Ignore the advertisement
     }
 
     if (rssi < -50) {                                                           // If the connection strength is very weak
+        printk("Connection strength too weak, ignoring advertisement (rssi=%d)", rssi);
         return;                                                                         // Ignore the advertisement
     }
 
     bt_le_scan_stop();                                                                                  // Stop scanning advertisements
     err = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, BT_LE_CONN_PARAM_DEFAULT, &ble_connection);   // Create a connection, storing information in `ble_connection`
     if (err) {                                                                                          // If the connection failed
-        printk("Error creating BLE connection - %s", bt_hci_err_to_str(err));
-        ble_connection = NULL;                                                                                      // Clear the connection information
+        printk("Error creating BLE connection - %s\n", bt_hci_err_to_str(err));
+        ble_connection = NULL;                                                                          // Clear the connection information
         return;
     }
 
-    printk("Connection Established");
+    printk("Connection Established\n");
 }
 
 bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data) {
     if (data->type == BT_DATA_NAME_COMPLETE || 
         data->type == BT_DATA_NAME_SHORTENED)                                   // If the data type is a name
     {
-        memcpy(user_data, data, data->data_len);                                        // Copy the name into `user_data`
-        ((char*)user_data)[data->data_len] = '\0';                                               // Make the name a cstring by adding a null terminator
-        return true;                                                                    // Indicate the name has been found
+        memcpy(user_data, data->data, data->data_len);                               // Copy the name into `user_data`
+        ((char*)user_data)[data->data_len] = '\0';                                   // Make the name a cstring by adding a null terminator
+        return false;                                                                // Stop parsing
     }
-    return false;                                                               // Indicate the name was not found
+    return true;                                                               // Continue parsing this advertising packet
 }
 
 void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
