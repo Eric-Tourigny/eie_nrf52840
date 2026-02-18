@@ -16,12 +16,15 @@
 
 int main(void) {
   if (0 > BTN_init()) {
+    printk("Button initialization error\n");
     return 0;
   }
   if (0 > LED_init()) {
+    printk("LED initialization error\n");
     return 0;
   }
   if (0 > init_bluetooth()) {
+    printk("Bluetooth initialization error\n");
     return 0;
   }
 

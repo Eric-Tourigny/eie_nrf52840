@@ -155,7 +155,7 @@ void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
 
         char mac_address[BT_ADDR_LE_STR_LEN];                                          // Define a buffer to hold the MAC address
         bt_addr_le_to_str(bt_conn_get_dst(conn), mac_address, sizeof(mac_address));     // Copy destination MAC address into buffer
-        printk("BLE connected to %s", mac_address);
+        printk("BLE connected to %s\n", mac_address);
 
         discover_params.uuid = NULL;                                         // Search for any UUID
         discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;        // Search from first GATT attribute
@@ -165,9 +165,10 @@ void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
 
         err = bt_gatt_discover(ble_connection, &discover_params);           // Setup GATT attributes
         if (err != 0) {
-            printk("Service discovery failed (err - %u)", err);
+            printk("Service discovery queueing failed (err - %u)\n", err);
             return;
         }
+        printk("Service discovery queueing successful\n");
     }
 }
 
@@ -181,24 +182,32 @@ void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason) {
 
 uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params) {
     if (attr == NULL) {                                                             // If the last attribute has been reached
+        printk("Reached final characteristic\n");
         return BT_GATT_ITER_STOP;                                                       // Stop searching attributes
     }
+
+    char uuid_buffer[64] = {0};
+    bt_uuid_to_str(attr->uuid, uuid_buffer, 64);
+    printk("Discovering characteristic (handle - %d, uuid - %s)\n", attr->handle, uuid_buffer);
     
-    if (bt_uuid_cmp(discover_params.uuid, &CCC_UUID.uuid)) {                     // If CCC descriptor
+    if (0 == bt_uuid_cmp(attr->uuid, &CCC_UUID.uuid)) {                     // If CCC descriptor
         if (next_subscribe_params != NULL) {                                    // If the previous characteristic set to be subscribed
             next_subscribe_params->value = BT_GATT_CCC_NOTIFY;                      // Configure as notifications
             next_subscribe_params->ccc_handle = attr->handle;                       // Set subscription handle (GATT index)
+
             err = bt_gatt_subscribe(conn, next_subscribe_params);                  // Subscribe to characteristic
             if (err != 0) {
-                printk("GATT discovery failed\n");
+                printk("GATT notify subscription failed\n");
             }
             next_subscribe_params = NULL;                                           // Indicate subscription is complete 
+            printk("Subscription to characteristic successful\n");
         }
-    } else if (bt_uuid_cmp(discover_params.uuid, &BUTTON_CHARACTERISTIC_ID.uuid)) {      // If button characteristic ID
+    } else if (0 == bt_uuid_cmp(attr->uuid, &BUTTON_CHARACTERISTIC_ID.uuid)) {      // If button characteristic ID
+        printk("Button characteristic discovered\n");
         next_subscribe_params = &button_subscribe_params;                               // Setup subscription, for when CCC found
+        next_subscribe_params->value_handle = attr->handle;                                 // Set handle to retrieve / set this attribute's value
     }
 
-    discover_params.start_handle += 1;                                              // Move to the next attribute
     return BT_GATT_ITER_CONTINUE;                                                   // Continue discovering attributes
 }
 
@@ -212,12 +221,17 @@ uint8_t init_bluetooth() {
         printk("Bluetooth initialized\n");
     }
 
-    bt_le_scan_start(BT_LE_SCAN_ACTIVE, ble_on_advertisement_received);         // Start scanning for advertisements
+    err = bt_le_scan_start(BT_LE_SCAN_ACTIVE, ble_on_advertisement_received);         // Start scanning for advertisements
 
-    return 0;               // Indicate no error occurred
+    return err;               // Indicate no error occurred
 }
 
 static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length) {
-    printk("Button Update Received (data: %u)", *((uint8_t*) data));
-    return 0;               // Indicate no error occurred
+    if (data == NULL) {                                                     // No data call indicates notification was cancelled
+        printk("Unsubscribed\n");
+        return BT_GATT_ITER_STOP;                                               // Stop receiving notifications
+    }
+
+    printk("Button Update Received (data: %u)\n", *((uint8_t*) data));
+    return BT_GATT_ITER_CONTINUE;                                           // Continue receiving button notifications
 }
