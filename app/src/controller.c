@@ -27,21 +27,6 @@
 
 
 /***************************************************************************************************************************************
- * Global Variables
- ***************************************************************************************************************************************/
-
-// The UUIDs for services and characteristics
-static struct bt_uuid_128 CONTROLLER_SERVICE_ID = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x660ED089, 0xB702, 0x356C, 0x594D, 0x2A471437E5C7));
-static struct bt_uuid_128 BUTTON_CHARACTERISTIC_ID = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x03A57D8B, 0x8092, 0xF3E6, 0x5B9D, 0x2002757871D3));
-static struct bt_uuid_16 CCC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CCC_VAL);      // UUID for GATT CCC notify attribute
-
-static int err;                                                             // The last BLE error code received
-static struct bt_conn* ble_connection = NULL;                               // The BLE connection to the controller
-struct bt_gatt_discover_params characteristic_discover_params;              // Parameters for asynchronous GATT characteristic discovery, must remain valid until discovery is complete
-struct bt_gatt_discover_params notify_discover_params;                      // Parameters for asynchronous GATT CCC descriptor discovery, must remain valid until discovery is complete
-static struct bt_gatt_subscribe_params subscribe_params;
-
-/***************************************************************************************************************************************
  * Declare Local Functions
  ***************************************************************************************************************************************/
 
@@ -58,18 +43,45 @@ static void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi,
 static bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data);
 
 /*
-* Callback function for when a BLE device is connected.
+* Callback for when BLE device connection.
 * Ensures the connection `conn` matches the connection that was selected, `ble_connection`.
 * Clears the connection information if an error occurred.
 * Discovers controller BLE service and characteristics.
 */
 static void ble_on_device_connected(struct bt_conn* conn, uint8_t err);
+
+/*
+ * Callback for BLE device is disconnection, clears connection information (`ble_connection`)
+ */
 static void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason);
 
-
+/*
+ * Callback to discover GATT characteristics and register notifications.
+ * Checks if `attr` matches each of the expected characteristic UUIDs, in which case it sets `next_subscribe_params` sets next subscribe params to corresponding variable.
+ * Whenever `attr` is a CCC descriptor, sets up notifications for `next_subscribe_params` (if any), thus enabling notifications for the last characteristic.
+ * Continues GATT discovery (return BT_GATT_ITER_CONTINUE) until end of the tree (a NULL `attr`) is reached (return BT_GATT_ITER_STOP)
+ * Expected to be used with bt_gatt_discover to scan the entire GATT tree.  
+ */
 static uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params);
 
-static uint8_t gatt_ccc_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params);
+
+static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length);
+
+
+/***************************************************************************************************************************************
+ * Global Variables
+ ***************************************************************************************************************************************/
+
+// The UUIDs for services and characteristics
+static const struct bt_uuid_128 BUTTON_CHARACTERISTIC_ID = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x03A57D8B, 0x8092, 0xF3E6, 0x5B9D, 0x2002757871D3));
+static const struct bt_uuid_16 CCC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CCC_VAL);      // UUID for any GATT CCC notify attribute
+
+static int err;                                                             // The last BLE error code received
+static struct bt_conn* ble_connection = NULL;                               // The BLE connection to the controller
+static struct bt_gatt_discover_params discover_params;                      // Parameters for asynchronous GATT characteristic discovery, must remain valid until discovery is complete
+
+static struct bt_gatt_subscribe_params *next_subscribe_params = NULL;                                   // CCC subscription parameters for current characteristic, during discovery
+static struct bt_gatt_subscribe_params button_subscribe_params = {.notify = button_update_func};        // CCC subscription parameters for button characteristic
 
 
 /***************************************************************************************************************************************
@@ -81,6 +93,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
   .connected = ble_on_device_connected,
   .disconnected = ble_on_device_disconnected
 };
+
 
 /***************************************************************************************************************************************
  * Define Local Functions
@@ -149,12 +162,17 @@ void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
         bt_addr_le_to_str(bt_conn_get_dst(conn), mac_address, sizeof(mac_address));     // Copy destination MAC address into buffer
         printk("BLE connected to %s", mac_address);
 
-        characteristic_discover_params.uuid = NULL;                                         // Search for any UUID
-        characteristic_discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;        // Search from first GATT attribute
-        characteristic_discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;           // To the last GATT attribute
-        characteristic_discover_params.func = gatt_characteristic_discover;                 // Process attributes with gatt_characteristic_discover
-        characteristic_discover_params.type = BT_GATT_DISCOVER_PRIMARY;                     // Search for characteristics
-        return bt_gatt_discover(ble_connection, &characteristic_discover_params);           // Setup GATT attributes
+        discover_params.uuid = NULL;                                         // Search for any UUID
+        discover_params.start_handle = BT_ATT_FIRST_ATTRIBUTE_HANDLE;        // Search from first GATT attribute
+        discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;           // To the last GATT attribute
+        discover_params.func = gatt_characteristic_discover;                 // Process attributes with gatt_characteristic_discover
+        discover_params.type = BT_GATT_DISCOVER_ATTRIBUTE;                   // Search for any attribute
+
+        err = bt_gatt_discover(ble_connection, &discover_params);           // Setup GATT attributes
+        if (err != 0) {
+            printk("Service discovery failed (err - %u)", err);
+            return;
+        }
     }
 }
 
@@ -171,38 +189,22 @@ uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_
         return BT_GATT_ITER_STOP;                                                       // Stop searching attributes
     }
     
-    if (bt_uuid_cmp(characteristic_discover_params, CCC_UUID)) {
-
-        characteristic_discover_params.uuid = NULL;                                 // Resume searching for attributes
-
-    } else {
-
+    if (bt_uuid_cmp(discover_params.uuid, &CCC_UUID.uuid)) {                     // If CCC descriptor
+        if (next_subscribe_params != NULL) {                                    // If the previous characteristic set to be subscribed
+            next_subscribe_params->value = BT_GATT_CCC_NOTIFY;                      // Configure as notifications
+            next_subscribe_params->ccc_handle = attr->handle;                       // Set subscription handle (GATT index)
+            err = bt_gatt_subscribe(conn, next_subscribe_params);                  // Subscribe to characteristic
+            if (err != 0) {
+                printk("GATT discovery failed\n");
+            }
+            next_subscribe_params = NULL;                                           // Indicate subscription is complete 
+        }
+    } else if (bt_uuid_cmp(discover_params.uuid, &BUTTON_CHARACTERISTIC_ID.uuid)) {      // If button characteristic ID
+        next_subscribe_params = &button_subscribe_params;                               // Setup subscription, for when CCC found
     }
 
-    return BT_GATT_ITER_CONTINUE;
-
-    if (bt_uuid_cmp(characteristic_discover_params.uuid, BUTTON_CHARACTERISTIC_ID)) {              // Button characteristic ID
-
-    }
-    characteristic_discover_params.start_handle += 1;                                              // Move to the next attribute
-    return BT_GATT_ITER_CONTINUE; 
-}
-
-uint8_t gatt_set_notify(bt_gatt_attr* for_attr, func) {
-    notify_discover_params.uuid = CCC_UUID;                                     // Search for any UUID
-    notify_discover_params.start_handle = for_attr->handle + 1;                 // Start search just after characteristic to set notifications for
-    notify_discover_params.end_handle = BT_ATT_LAST_ATTRIBUTE_HANDLE;           // To the last GATT attribute
-    notify_discover_params.func = gatt_ccc_discover;                            // Process attributes with gatt_ccc_discover
-    notify_discover_params.type = BT_GATT_DISCOVER_DESCRIPTOR;                  // Search for descriptor
-    bt_gatt_discover(&ble_connection, &notify_discover_params);
-}
-
-uint8_t gatt_ccc_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params) {
-    if (attr == NULL) {                                                             // If the last attribute has been reached
-        printk("Unable to find CCC attribute\n");   
-        return BT_GATT_ITER_STOP;                                                       // Stop searching attributes
-    }
-    printk("CCC found");
+    discover_params.start_handle += 1;                                              // Move to the next attribute
+    return BT_GATT_ITER_CONTINUE;                                                   // Continue discovering attributes
 }
 
 
@@ -217,5 +219,10 @@ uint8_t init_bluetooth() {
 
     bt_le_scan_start(BT_LE_SCAN_ACTIVE, ble_on_advertisement_received);         // Start scanning for advertisements
 
-    return 0;
+    return 0;               // Indicate no error occurred
+}
+
+static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length) {
+    printk("Button Update Received (data: %u)", *((uint8_t*) data));
+    return 0;               // Indicate no error occurred
 }
