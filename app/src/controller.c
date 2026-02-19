@@ -83,6 +83,8 @@ static struct bt_gatt_discover_params discover_params;                      // P
 static struct bt_gatt_subscribe_params *next_subscribe_params = NULL;                                   // CCC subscription parameters for current characteristic, during discovery
 static struct bt_gatt_subscribe_params button_subscribe_params = {.notify = button_update_func};        // CCC subscription parameters for button characteristic
 
+static uint8_t last_button_states = 0;
+static uint8_t button_events = 0;
 
 /***************************************************************************************************************************************
  * Configure BLE
@@ -99,7 +101,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
  * Define Local Functions
  ***************************************************************************************************************************************/
 
-void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple* buf) {
+static void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple* buf) {
     if (ble_connection != NULL) {                                               // If a connection has already been or is being established
         printk("Advertisement ignored - BLE connection already established\n");
         return;                                                                         // Ignore the advertisement
@@ -133,7 +135,7 @@ void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_
     printk("Connection Established\n");
 }
 
-bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data) {
+static bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data) {
     if (data->type == BT_DATA_NAME_COMPLETE || 
         data->type == BT_DATA_NAME_SHORTENED)                                   // If the data type is a name
     {
@@ -144,7 +146,7 @@ bool ble_get_adv_device_name_cb(struct bt_data* data, void* user_data) {
     return true;                                                               // Continue parsing this advertising packet
 }
 
-void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
+static void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
     if (conn == ble_connection) {                                               // If the connection is actually the one we tried to make (to the controller)
         
         if(err != 0) {                                                                  // If the connection failed
@@ -172,7 +174,7 @@ void ble_on_device_connected(struct bt_conn* conn, uint8_t err) {
     }
 }
 
-void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason) {
+static void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason) {
     if (conn == ble_connection) {                                               // If the *controller* connection was lost
         bt_conn_unref(conn);                                                            // Clear connection information
         ble_connection = NULL;                                                          // Indicate no connection is currently made
@@ -180,7 +182,7 @@ void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason) {
     }
 }
 
-uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params) {
+static uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params) {
     if (attr == NULL) {                                                             // If the last attribute has been reached
         printk("Reached final characteristic\n");
         return BT_GATT_ITER_STOP;                                                       // Stop searching attributes
@@ -232,6 +234,36 @@ static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe
         return BT_GATT_ITER_STOP;                                               // Stop receiving notifications
     }
 
-    printk("Button Update Received (data: %u)\n", *((uint8_t*) data));
+    uint8_t new_button_states = *((uint8_t*) data);                         // Extract boolean values for whether each button was pressed from data
+    button_events |= last_button_states ^ new_button_states;                // Register new button events for each value that changed
+    last_button_states = new_button_states;                                 // Update stored button states
+
     return BT_GATT_ITER_CONTINUE;                                           // Continue receiving button notifications
+}
+
+bool button_check_clear_pressed(uint8_t button_id) {
+    uint8_t button_index_mask = 1 << button_id;                             // Mask for bit where button's information is
+    if ((button_events & button_index_mask) &&                              // If a button event occurred at that index
+        (last_button_states & button_index_mask))                           // And that button is currently down (1)
+    {                         
+        button_events &= ~button_index_mask;                                    // Clear the button event
+        return true;                                                            // Return that the button was pressed
+    }
+    return false;                                                           // Return that the button was *not* pressed
+}
+
+bool button_check_clear_released(uint8_t button_id) {
+    uint8_t button_index_mask = 1 << button_id;                             // Mask for bit where button's information is
+    if ((button_events & button_index_mask) &&                              // If a button event occurred at that index
+        !(last_button_states & button_index_mask))                          // And the button is currently up (0)
+    {
+        button_events &= ~button_index_mask;                                    // Clear the button event
+        return true;                                                            // Return that the button was released
+    }
+    return false;                                                           // Return that the button was *not* released
+}
+
+bool button_check_held(uint8_t button_id) {
+    uint8_t button_index_mask = 1 << button_id;                             // Mask for bit where button's information is
+    return (last_button_states && button_index_mask) != 0;                  // Return whether button is currently down (1)
 }
