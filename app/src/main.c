@@ -23,22 +23,26 @@
   #include "drivers/LED/LED.h"
 #endif
 
-#define SLEEP_MS 100        // Ten FPS
+#define SLEEP_MS 33        // 30 FPS
 
-#define SCREEN_WIDTH 320 * 8
-#define SCREEN_HEIGHT 240 * 8
+// The first 8 bits of each position value represents a subpixel value, allowing for clean movement
+// Values should be shifted by SUBPIXEL shift before being passed into LVGL
+#define SUBPIXEL_SHIFT 8
+
+#define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
+#define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
 struct {
-  int16_t x;
-  int16_t y;
+  int32_t x;
+  int32_t y;
 } typedef vector2_t;
 
 struct {
   lv_obj_t* player_body;
   vector2_t position;
   vector2_t velocity;
-  uint16_t height;
-  uint16_t width;
+  uint32_t height;
+  uint32_t width;
 } typedef player_t;
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
@@ -47,8 +51,8 @@ static player_t player = {
   NULL,
   {20, 20},
   {0, 2},
-  10,
-  10
+  10 << SUBPIXEL_SHIFT,
+  10 << SUBPIXEL_SHIFT
 };
 
 uint8_t init_game() {
@@ -61,8 +65,8 @@ uint8_t init_game() {
   game_screen = lv_obj_create(NULL);                                      // Create LVGL screen
 
   lv_obj_t* rect = lv_obj_create(game_screen);                            // Create rectangle LVGL object
-  lv_obj_set_size(rect, player.width, player.height);                     // Set size as 10 px by 10 px
-  lv_obj_set_pos(rect, 10, 10);                                           // Initial position from top left corner
+  lv_obj_set_size(rect, player.width >> SUBPIXEL_SHIFT, player.height >> SUBPIXEL_SHIFT);           // Set size as 10 px by 10 px
+  lv_obj_set_pos(rect, player.position.x >> SUBPIXEL_SHIFT, player.position.y >> SUBPIXEL_SHIFT);   // Initial position from top left corner
   lv_obj_set_style_bg_color(rect, lv_color_hex(0xff0000), LV_PART_MAIN);  // Set color as red
   lv_obj_set_style_radius(rect, 0, LV_PART_MAIN);                         // Remove circular corners
   player.player_body = rect;                                              // Set player body as rectangle
@@ -71,32 +75,32 @@ uint8_t init_game() {
 }
 
 uint8_t update_game() {
-  player.velocity.y += 1;
+  player.velocity.y += 64;
   switch (joystick_state.h) {
     case JOYSTICK_LEFT:
-      player.velocity.x = -4;
+      player.velocity.x = -256;
       break;
     case JOYSTICK_HORIZONTAL_NEUTRAL:
       player.velocity.x = 0;
       break;
     case JOYSTICK_RIGHT:
-      player.velocity.x = 4;
+      player.velocity.x = 256;
       break;
   }
 
 
   player.position.x += player.velocity.x;
   player.position.y += player.velocity.y;
-  if (player.position.y > SCREEN_HEIGHT - player.height * 8) {
-    player.position.y = SCREEN_HEIGHT - player.height * 8;
+  if (player.position.y > SCREEN_HEIGHT - player.height) {
+    player.position.y = SCREEN_HEIGHT - player.height;
     player.velocity.y = 0;
   }
 
-  if (player.position.y == SCREEN_HEIGHT - player.height * 8 && button_check_held(BUTTON_ID_A)) {
-    player.velocity.y = -15;
+  if (player.position.y == SCREEN_HEIGHT - player.height && button_check_held(BUTTON_ID_A)) {
+    player.velocity.y = -1024;
   }
 
-  lv_obj_set_pos(player.player_body, player.position.x / 8, player.position.y / 8);
+  lv_obj_set_pos(player.player_body, player.position.x >> SUBPIXEL_SHIFT, player.position.y >> SUBPIXEL_SHIFT);
 
 
   return 0;
