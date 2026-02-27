@@ -2,14 +2,20 @@
  * main.c
  */
 
-#include "controller.h"
-#include "BTN.h"
-#include "LED.h"
 
 #include <inttypes.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
+
+#include "LED.h"
+#include "BTN.h"
+#include "controller.h"
+
+#ifdef __INTELLISENSE__
+  #include "drivers/BTN/BTN.h"
+  #include "drivers/LED/LED.h"
+#endif
 
 
 #define SLEEP_MS 1
@@ -29,7 +35,19 @@ int main(void) {
   }
 
   while(1) {
+    if (button_check_clear_pressed(BUTTON_ID_A)) {
+      LED_toggle(LED0);
+    }
+    if (button_check_clear_released(BUTTON_ID_B)) {
+      LED_toggle(LED1);
+    }
+    if (button_check_clear_pressed(BUTTON_ID_X) || button_check_clear_released(BUTTON_ID_X)) {
+      LED_toggle(LED2);
+    }
+    LED_set(LED3, button_check_held(BUTTON_ID_Y));
+
     k_msleep(SLEEP_MS);
   }
+
 	return 0;
 }

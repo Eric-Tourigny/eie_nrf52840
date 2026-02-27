@@ -265,5 +265,5 @@ bool button_check_clear_released(uint8_t button_id) {
 
 bool button_check_held(uint8_t button_id) {
     uint8_t button_index_mask = 1 << button_id;                             // Mask for bit where button's information is
-    return (last_button_states && button_index_mask) != 0;                  // Return whether button is currently down (1)
+    return (last_button_states & button_index_mask) != 0;                  // Return whether button is currently down (1)
 }
