@@ -18,4 +18,5 @@ manifest:
         # strictly needed by the application.
         name-allowlist:
           - cmsis_6    # required by the ARM port for Cortex-M
-          - hal_nordic # required by the nRF52840
+          - hal_nordic # required by the 
+          - lvgl       # light versatile graphics library
