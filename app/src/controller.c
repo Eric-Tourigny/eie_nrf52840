@@ -64,9 +64,16 @@ static void ble_on_device_disconnected(struct bt_conn* conn, uint8_t reason);
  */
 static uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct bt_gatt_attr* attr, struct bt_gatt_discover_params* params);
 
-
+/*
+ * Callback for notifications of button updates. Expects a single byte of `data` representing a bitmask for whether each button is on.
+ * Updates `last_button_states` and `button_events` so button API functions can receive appropriate updates.
+ */
 static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length);
 
+/*
+ * Callback for notifications of joystick updates
+ */
+static uint8_t joystick_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length);
 
 /***************************************************************************************************************************************
  * Global Variables
@@ -74,6 +81,7 @@ static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe
 
 // The UUIDs for services and characteristics
 static const struct bt_uuid_128 BUTTON_CHARACTERISTIC_ID = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x03A57D8B, 0x8092, 0xF3E6, 0x5B9D, 0x2002757871D3));
+static const struct bt_uuid_128 JOYSTICK_CHARACTERISTIC_ID = BT_UUID_INIT_128(BT_UUID_128_ENCODE(0x08154e46, 0x99b7, 0x5ea3, 0xd6d7, 0xc983e5568d64));
 static const struct bt_uuid_16 CCC_UUID = BT_UUID_INIT_16(BT_UUID_GATT_CCC_VAL);      // UUID for any GATT CCC notify attribute
 
 static int err;                                                             // The last BLE error code received
@@ -82,9 +90,11 @@ static struct bt_gatt_discover_params discover_params;                      // P
 
 static struct bt_gatt_subscribe_params *next_subscribe_params = NULL;                                   // CCC subscription parameters for current characteristic, during discovery
 static struct bt_gatt_subscribe_params button_subscribe_params = {.notify = button_update_func};        // CCC subscription parameters for button characteristic
+static struct bt_gatt_subscribe_params joystick_subscribe_params = {.notify = joystick_update_func};    // CCC subscription parameters for joystick characteristic
 
-static uint8_t last_button_states = 0;
-static uint8_t button_events = 0;
+static uint8_t last_button_states = 0;          // Bitmask representing last state of each button
+static uint8_t button_events = 0;               // Bitmask representing whether event occurred on each button
+joystick_t joystick_state;                      // Global variable for current state of joystick
 
 /***************************************************************************************************************************************
  * Configure BLE
@@ -98,7 +108,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 
 /***************************************************************************************************************************************
- * Define Local Functions
+ * BLE Local Function Definitions
  ***************************************************************************************************************************************/
 
 static void ble_on_advertisement_received(const bt_addr_le_t* addr, int8_t rssi, uint8_t adv_type, struct net_buf_simple* buf) {
@@ -204,9 +214,13 @@ static uint8_t gatt_characteristic_discover(struct bt_conn* conn, const struct b
             next_subscribe_params = NULL;                                           // Indicate subscription is complete 
             printk("Subscription to characteristic successful\n");
         }
-    } else if (0 == bt_uuid_cmp(attr->uuid, &BUTTON_CHARACTERISTIC_ID.uuid)) {      // If button characteristic ID
+    } else if (0 == bt_uuid_cmp(attr->uuid, &BUTTON_CHARACTERISTIC_ID.uuid)) {      // If matches button characteristic
         printk("Button characteristic discovered\n");
         next_subscribe_params = &button_subscribe_params;                               // Setup subscription, for when CCC found
+        next_subscribe_params->value_handle = attr->handle;                                 // Set handle to retrieve / set this attribute's value
+    } else if (0 == bt_uuid_cmp(attr->uuid, &JOYSTICK_CHARACTERISTIC_ID.uuid)) {    // If matches joystick characteristic
+        printk("Joystick characteristic discovered\n");
+        next_subscribe_params = &joystick_subscribe_params;                             // Setup subscription, for when CCC found
         next_subscribe_params->value_handle = attr->handle;                                 // Set handle to retrieve / set this attribute's value
     }
 
@@ -228,10 +242,15 @@ uint8_t init_bluetooth() {
     return err;               // Indicate no error occurred
 }
 
+
+/***************************************************************************************************************************************
+ * Notification Callback Function Definitions
+ ***************************************************************************************************************************************/
+
 static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length) {
-    if (data == NULL) {                                                     // No data call indicates notification was cancelled
-        printk("Unsubscribed\n");
-        return BT_GATT_ITER_STOP;                                               // Stop receiving notifications
+    if (data == NULL) {                                                     // No data call indicates notification cancelled by GATT server
+        printk("Button Characteristic Unsubscribed\n");
+        return BT_GATT_ITER_STOP;                                               // Stop looking for notifications
     }
 
     uint8_t new_button_states = *((uint8_t*) data);                         // Extract boolean values for whether each button was pressed from data
@@ -240,6 +259,24 @@ static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe
 
     return BT_GATT_ITER_CONTINUE;                                           // Continue receiving button notifications
 }
+
+static uint8_t joystick_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length) {
+    if (data == NULL) {                                                     // No data call indicates notification cancelled by GATT server
+        printk("Joystick Characteristic Unsubscribed\n");
+        return BT_GATT_ITER_STOP;                                               // Stop looking for notifications
+    }
+
+    // Update current joystick state - each byte should be either 0, 1 or 2
+    joystick_state.h = ((uint8_t*) data)[0];
+    joystick_state.v = ((uint8_t*) data)[1];
+
+    return BT_GATT_ITER_CONTINUE;                                           // Continue receiving joystick notifications
+}
+
+
+/***************************************************************************************************************************************
+ * Global API Function Definitions
+ ***************************************************************************************************************************************/
 
 bool button_check_clear_pressed(uint8_t button_id) {
     uint8_t button_index_mask = 1 << button_id;                             // Mask for bit where button's information is

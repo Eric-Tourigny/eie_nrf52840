@@ -36,15 +36,18 @@ int main(void) {
 
   while(1) {
     if (button_check_clear_pressed(BUTTON_ID_A)) {
-      LED_toggle(LED0);
+      if (joystick_state.h == JOYSTICK_LEFT) {
+        LED_toggle(LED0);
+      } else if (joystick_state.h == JOYSTICK_RIGHT) {
+        LED_toggle(LED3);
+      }
+      
+      if (joystick_state.v == JOYSTICK_DOWN) {
+        LED_toggle(LED2);
+      } else if (joystick_state.v == JOYSTICK_UP) {
+        LED_toggle(LED1);
+      }
     }
-    if (button_check_clear_released(BUTTON_ID_B)) {
-      LED_toggle(LED1);
-    }
-    if (button_check_clear_pressed(BUTTON_ID_X) || button_check_clear_released(BUTTON_ID_X)) {
-      LED_toggle(LED2);
-    }
-    LED_set(LED3, button_check_held(BUTTON_ID_Y));
 
     k_msleep(SLEEP_MS);
   }

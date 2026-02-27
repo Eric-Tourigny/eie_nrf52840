@@ -53,6 +53,7 @@ def update_button_characteristic(controller: JoystickType, server: BlessServer):
         for in_index, out_index in BUTTON_MAPPING.items():
             byte |= controller.get_button(in_index) << out_index                                    # Place button number in_index in bit out_index
         characteristic.value = bytearray([byte])                                                    # Update characteristic value
+        logger.debug("Button notification")
         server.update_value(CONTROLLER_SERVICE_ID, BUTTON_CHARACTERISTIC_ID)                        # Send notification
 
 # Update joystick positions based on controller
@@ -62,7 +63,9 @@ def update_joystick_characteristic(data: dict, server: BlessServer):
         if data["axis"] in (0, 1):  # Horizontal or vertical motion
             joystick_value = 0 if data["value"] < -JOYSTICK_THRESHOLD else 1 if data["value"] < JOYSTICK_THRESHOLD else 2
             if last_joystick_values[data["axis"]] != joystick_value:
+                last_joystick_values[data["axis"]] = joystick_value
                 characteristic.value[data["axis"]] = joystick_value
+                logger.debug("Joystick notification")
                 server.update_value(CONTROLLER_SERVICE_ID, JOYSTICK_CHARACTERISTIC_ID)
     
 
@@ -129,11 +132,8 @@ def update_characteristics(controller: JoystickType, server: BlessServer):
     for event in pygame.event.get():
         match event.type:
             case pygame.JOYBUTTONUP | pygame.JOYBUTTONDOWN:
-                logger.debug("Button Event")
                 update_button_characteristic(controller, server) 
             case pygame.JOYAXISMOTION:
-                logger.debug("Axis motion")
-                logger.debug(event.dict)
                 update_joystick_characteristic(event.dict, server)
 
 async def main():
