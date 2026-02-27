@@ -94,7 +94,12 @@ static struct bt_gatt_subscribe_params joystick_subscribe_params = {.notify = jo
 
 static uint8_t last_button_states = 0;          // Bitmask representing last state of each button
 static uint8_t button_events = 0;               // Bitmask representing whether event occurred on each button
-joystick_t joystick_state;                      // Global variable for current state of joystick
+
+ // Global variable for current state of joystick
+joystick_t joystick_state = {
+    .h = JOYSTICK_HORIZONTAL_NEUTRAL,
+    .v = JOYSTICK_VERTICAL_NEUTRAL
+};                      
 
 /***************************************************************************************************************************************
  * Configure BLE

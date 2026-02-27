@@ -72,6 +72,18 @@ uint8_t init_game() {
 
 uint8_t update_game() {
   player.velocity.y += 1;
+  switch (joystick_state.h) {
+    case JOYSTICK_LEFT:
+      player.velocity.x = -4;
+      break;
+    case JOYSTICK_HORIZONTAL_NEUTRAL:
+      player.velocity.x = 0;
+      break;
+    case JOYSTICK_RIGHT:
+      player.velocity.x = 4;
+      break;
+  }
+
 
   player.position.x += player.velocity.x;
   player.position.y += player.velocity.y;
