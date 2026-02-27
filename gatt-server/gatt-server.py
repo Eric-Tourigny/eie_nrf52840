@@ -28,6 +28,7 @@ SERVER_NAME = "EiE 5666 Test GATT Server"
 # Define service and characteristic UUIDs
 CONTROLLER_SERVICE_ID = BT_UUID_128_ENCODE(0x660ED089, 0xB702, 0x356C, 0x594D, 0x2A471437E5C7)
 BUTTON_CHARACTERISTIC_ID = BT_UUID_128_ENCODE(0x03A57D8B, 0x8092, 0xF3E6, 0x5B9D, 0x2002757871D3)
+JOYSTICK_CHARACTERISTIC_ID = BT_UUID_128_ENCODE(0x08154e46, 0x99b7, 0x5ea3, 0xd6d7, 0xc983e5568d64)
 
 CHARACTERISTIC_LENGTH = 32
 
@@ -43,6 +44,8 @@ BUTTON_MAPPING = {
     3: 3
 }
 
+JOYSTICK_THRESHOLD = 0.5
+
 # Update button characteristic based on controller
 def update_button_characteristic(controller: JoystickType, server: BlessServer):
     if (characteristic := server.get_characteristic(BUTTON_CHARACTERISTIC_ID)) is not None:
@@ -51,6 +54,17 @@ def update_button_characteristic(controller: JoystickType, server: BlessServer):
             byte |= controller.get_button(in_index) << out_index                                    # Place button number in_index in bit out_index
         characteristic.value = bytearray([byte])                                                    # Update characteristic value
         server.update_value(CONTROLLER_SERVICE_ID, BUTTON_CHARACTERISTIC_ID)                        # Send notification
+
+# Update joystick positions based on controller
+last_joystick_values = [None, None]
+def update_joystick_characteristic(data: dict, server: BlessServer):
+    if (characteristic := server.get_characteristic(JOYSTICK_CHARACTERISTIC_ID)):
+        if data["axis"] in (0, 1):  # Horizontal or vertical motion
+            joystick_value = 0 if data["value"] < -JOYSTICK_THRESHOLD else 1 if data["value"] < JOYSTICK_THRESHOLD else 2
+            if last_joystick_values[data["axis"]] != joystick_value:
+                characteristic.value[data["axis"]] = joystick_value
+                server.update_value(CONTROLLER_SERVICE_ID, JOYSTICK_CHARACTERISTIC_ID)
+    
 
 async def init_gatt_server():
     logger.debug("Creating GATT Server")
@@ -68,6 +82,16 @@ async def init_gatt_server():
                       GATTAttributePermissions.readable
                 ),
                 "Value": bytearray([0])
+            },
+            JOYSTICK_CHARACTERISTIC_ID: {
+                "Properties": (
+                      GATTCharacteristicProperties.read
+                    | GATTCharacteristicProperties.notify 
+                ),
+                "Permissions": (
+                      GATTAttributePermissions.readable
+                ),
+                "Value": bytearray([0, 0])
             }
         }
     }
@@ -107,6 +131,10 @@ def update_characteristics(controller: JoystickType, server: BlessServer):
             case pygame.JOYBUTTONUP | pygame.JOYBUTTONDOWN:
                 logger.debug("Button Event")
                 update_button_characteristic(controller, server) 
+            case pygame.JOYAXISMOTION:
+                logger.debug("Axis motion")
+                logger.debug(event.dict)
+                update_joystick_characteristic(event.dict, server)
 
 async def main():
     controller, server = await asyncio.gather(init_controller(), init_gatt_server())
