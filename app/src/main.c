@@ -25,8 +25,8 @@
 
 #define SLEEP_MS 100        // Ten FPS
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+#define SCREEN_WIDTH 320 * 8
+#define SCREEN_HEIGHT 240 * 8
 
 struct {
   int16_t x;
@@ -71,14 +71,21 @@ uint8_t init_game() {
 }
 
 uint8_t update_game() {
+  player.velocity.y += 1;
+
   player.position.x += player.velocity.x;
   player.position.y += player.velocity.y;
-  if (player.position.y > SCREEN_HEIGHT - player.height) {
-    player.position.y = SCREEN_HEIGHT - player.height;
+  if (player.position.y > SCREEN_HEIGHT - player.height * 8) {
+    player.position.y = SCREEN_HEIGHT - player.height * 8;
     player.velocity.y = 0;
   }
 
-  lv_obj_set_pos(player.player_body, player.position.x, player.position.y);
+  if (player.position.y == SCREEN_HEIGHT - player.height * 8 && button_check_held(BUTTON_ID_A)) {
+    player.velocity.y = -15;
+  }
+
+  lv_obj_set_pos(player.player_body, player.position.x / 8, player.position.y / 8);
+
 
   return 0;
 }
