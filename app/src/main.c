@@ -71,6 +71,8 @@ game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h
   lv_obj_set_size(image, w, h);
   lv_obj_set_style_bg_color(image, lv_color_hex(0xff0000), LV_PART_MAIN);
   lv_obj_set_style_radius(image, 0, LV_PART_MAIN);
+  lv_obj_set_style_pad_all(image, 0, LV_PART_MAIN);
+  lv_obj_set_style_border_width(image, 0, LV_PART_MAIN);
   obj->image = image;
 
   return obj;
@@ -92,8 +94,9 @@ uint8_t init_screen() {
 
   init_player();
 
-  game_objects[0] = create_game_object(5, 100, 100, 5);
-  game_objects[1] = create_game_object(120, 90, 50, 5);
+  game_objects[0] = create_game_object(5, 100, 100, 2);
+  game_objects[1] = create_game_object(120, 90, 50, 2);
+  game_objects[2] = NULL;
 
   return 0;
 }
@@ -122,18 +125,29 @@ uint8_t update_game() {
       player.vel.x = 256;
       break;
   }
+  
+  int32_t new_x = player.obj->pos.x + player.vel.x;
+  int32_t new_y = player.obj->pos.y + player.vel.y;
 
+  for (int i = 0; i < MAX_NUM_GAME_OBJECTS; i++) {
+    game_object_t* obj = game_objects[i];
+    if (obj == NULL) {
+      break;
+    }
 
-  player.obj->pos.x += player.vel.x;
-  player.obj->pos.y += player.vel.y;
-  if (player.obj->pos.y > SCREEN_HEIGHT - player.obj->h) {
-    player.obj->pos.y = SCREEN_HEIGHT - player.obj->h;
-    player.vel.y = 0;
+    if (new_y + player.obj->h > obj->pos.y && new_y < obj->pos.y + obj->h &&
+        new_x + player.obj->w > obj->pos.x && new_x < obj->pos.x + obj->w) {
+      new_y = obj->pos.y - player.obj->h;
+      if (button_check_held(BUTTON_ID_A)) {
+        player.vel.y = -1024;
+      } else {
+        player.vel.y = 0;
+      }
+    }
   }
 
-  if (player.obj->pos.y == SCREEN_HEIGHT - player.obj->h && button_check_held(BUTTON_ID_A)) {
-    player.vel.y = -1024;
-  }
+  player.obj->pos.x = new_x;
+  player.obj->pos.y = new_y;
 
   lv_obj_set_pos(player.obj->image, player.obj->pos.x >> SUBPIXEL_SHIFT, player.obj->pos.y >> SUBPIXEL_SHIFT);
 
