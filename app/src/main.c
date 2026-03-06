@@ -16,6 +16,7 @@
 #include "BTN.h"
 #include "lv_data_obj.h"
 #include "controller.h"
+#include "game_object.h"
 
 #ifdef __INTELLISENSE__
   #include <modules/lib/gui/lvgl/lvgl.h>
@@ -25,26 +26,12 @@
 
 #define SLEEP_MS 33        // 30 FPS
 
-// The first 8 bits of each position value represents a subpixel value, allowing for clean movement
-// Values should be shifted by SUBPIXEL shift before being passed into LVGL
-#define SUBPIXEL_SHIFT 8
-
 #define MAX_NUM_GAME_OBJECTS 100
 
 #define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
 #define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
-struct __vector2_t {
-  int32_t x;
-  int32_t y;
-} typedef vector2_t;
 
-struct __game_object_t {
-  lv_obj_t* image;
-  vector2_t pos;
-  int32_t w;
-  int32_t h;
-} typedef game_object_t;
 
 struct __player_t {
   game_object_t* obj;
@@ -62,29 +49,11 @@ static player_t player;
 
 static game_object_t* game_objects[MAX_NUM_GAME_OBJECTS];
 
-game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const lv_image_dsc_t* image_src) {
-  game_object_t* obj = k_malloc(sizeof(game_object_t));
-  obj->pos.x = x << SUBPIXEL_SHIFT;
-  obj->pos.y = y << SUBPIXEL_SHIFT;
-  obj->w = w << SUBPIXEL_SHIFT;
-  obj->h = h << SUBPIXEL_SHIFT;
 
-  lv_obj_t* image = lv_image_create(game_screen);
-  lv_image_set_src(image, image_src);
-  lv_obj_set_pos(image, x, y);
 
-  obj->image = image;
-
-  return obj;
-}
-
-void destroy_game_object(game_object_t* obj) {
-  lv_obj_delete_async(obj->image);
-  k_free(obj);
-}
 
 void init_player() {
-  player.obj = create_game_object(15, 15 * 10, 15, 15, &SpritePlayer);
+  player.obj = create_game_object(15, 15 * 10, 15, 15, &SpritePlayer, game_screen);
   player.vel.x = 0;
   player.vel.y = 0;
 }
@@ -94,9 +63,9 @@ uint8_t init_screen() {
 
   init_player();
 
-  game_objects[0] = create_game_object(0, 15 * 15, 15, 15, &SpriteRockTile);
-  game_objects[1] = create_game_object(15, 15 * 15, 15, 15, &SpriteRockTile);
-  game_objects[2] = create_game_object(30, 15 * 15, 15, 15, &SpriteRockTile);
+  game_objects[0] = create_game_object(0, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
+  game_objects[1] = create_game_object(15, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
+  game_objects[2] = create_game_object(30, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
   game_objects[3] = NULL;
 
   return 0;
@@ -150,7 +119,7 @@ uint8_t update_game() {
   player.obj->pos.x = new_x;
   player.obj->pos.y = new_y;
 
-  lv_obj_set_pos(player.obj->image, player.obj->pos.x >> SUBPIXEL_SHIFT, player.obj->pos.y >> SUBPIXEL_SHIFT);
+  lv_obj_set_pos(player.obj->sprite, player.obj->pos.x >> SUBPIXEL_SHIFT, player.obj->pos.y >> SUBPIXEL_SHIFT);
 
 
   return 0;
