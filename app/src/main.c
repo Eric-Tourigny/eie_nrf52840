@@ -15,8 +15,10 @@
 #include "LED.h"
 #include "BTN.h"
 #include "lv_data_obj.h"
+
 #include "controller.h"
 #include "game_object.h"
+#include "player.h"
 
 #ifdef __INTELLISENSE__
   #include <modules/lib/gui/lvgl/lvgl.h>
@@ -31,37 +33,16 @@
 #define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
 #define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
-
-
-struct __player_t {
-  game_object_t* obj;
-  vector2_t vel;
-} typedef player_t;
-
-// Sprites
-extern const lv_image_dsc_t SpritePlayer; 
 extern const lv_image_dsc_t SpriteRockTile;
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
 
-static player_t player;
-
 static game_object_t* game_objects[MAX_NUM_GAME_OBJECTS];
-
-
-
-
-void init_player() {
-  player.obj = create_game_object(15, 15 * 10, 15, 15, &SpritePlayer, game_screen);
-  player.vel.x = 0;
-  player.vel.y = 0;
-}
 
 uint8_t init_screen() {
   lv_obj_clean(game_screen);
-
-  init_player();
+  init_player(game_screen);
 
   game_objects[0] = create_game_object(0, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
   game_objects[1] = create_game_object(15, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
@@ -83,44 +64,7 @@ uint8_t init_game() {
 }
 
 uint8_t update_game() {
-  player.vel.y += 64;
-  switch (joystick_state.h) {
-    case JOYSTICK_LEFT:
-      player.vel.x = -256;
-      break;
-    case JOYSTICK_HORIZONTAL_NEUTRAL:
-      player.vel.x = 0;
-      break;
-    case JOYSTICK_RIGHT:
-      player.vel.x = 256;
-      break;
-  }
-  
-  int32_t new_x = player.obj->pos.x + player.vel.x;
-  int32_t new_y = player.obj->pos.y + player.vel.y;
-
-  for (int i = 0; i < MAX_NUM_GAME_OBJECTS; i++) {
-    game_object_t* obj = game_objects[i];
-    if (obj == NULL) {
-      break;
-    }
-
-    if (new_y + player.obj->h > obj->pos.y && new_y < obj->pos.y + obj->h &&
-        new_x + player.obj->w > obj->pos.x && new_x < obj->pos.x + obj->w) {
-      new_y = obj->pos.y - player.obj->h;
-      if (button_check_held(BUTTON_ID_A)) {
-        player.vel.y = -1024;
-      } else {
-        player.vel.y = 0;
-      }
-    }
-  }
-
-  player.obj->pos.x = new_x;
-  player.obj->pos.y = new_y;
-
-  lv_obj_set_pos(player.obj->sprite, player.obj->pos.x >> SUBPIXEL_SHIFT, player.obj->pos.y >> SUBPIXEL_SHIFT);
-
+  update_player_location(game_objects);
 
   return 0;
 }
