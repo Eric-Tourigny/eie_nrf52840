@@ -51,6 +51,9 @@ struct __player_t {
   vector2_t vel;
 } typedef player_t;
 
+// Sprites
+extern const lv_image_dsc_t SpritePlayer; 
+extern const lv_image_dsc_t SpriteRockTile;
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
@@ -59,20 +62,17 @@ static player_t player;
 
 static game_object_t* game_objects[MAX_NUM_GAME_OBJECTS];
 
-game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const lv_image_dsc_t* image_src) {
   game_object_t* obj = k_malloc(sizeof(game_object_t));
   obj->pos.x = x << SUBPIXEL_SHIFT;
   obj->pos.y = y << SUBPIXEL_SHIFT;
   obj->w = w << SUBPIXEL_SHIFT;
   obj->h = h << SUBPIXEL_SHIFT;
 
-  lv_obj_t* image = lv_obj_create(game_screen);
+  lv_obj_t* image = lv_image_create(game_screen);
+  lv_image_set_src(image, image_src);
   lv_obj_set_pos(image, x, y);
-  lv_obj_set_size(image, w, h);
-  lv_obj_set_style_bg_color(image, lv_color_hex(0xff0000), LV_PART_MAIN);
-  lv_obj_set_style_radius(image, 0, LV_PART_MAIN);
-  lv_obj_set_style_pad_all(image, 0, LV_PART_MAIN);
-  lv_obj_set_style_border_width(image, 0, LV_PART_MAIN);
+
   obj->image = image;
 
   return obj;
@@ -84,7 +84,7 @@ void destroy_game_object(game_object_t* obj) {
 }
 
 void init_player() {
-  player.obj = create_game_object(20, 10, 10, 10);
+  player.obj = create_game_object(15, 15 * 10, 15, 15, &SpritePlayer);
   player.vel.x = 0;
   player.vel.y = 0;
 }
@@ -94,9 +94,10 @@ uint8_t init_screen() {
 
   init_player();
 
-  game_objects[0] = create_game_object(5, 100, 100, 2);
-  game_objects[1] = create_game_object(120, 90, 50, 2);
-  game_objects[2] = NULL;
+  game_objects[0] = create_game_object(0, 15 * 15, 15, 15, &SpriteRockTile);
+  game_objects[1] = create_game_object(15, 15 * 15, 15, 15, &SpriteRockTile);
+  game_objects[2] = create_game_object(30, 15 * 15, 15, 15, &SpriteRockTile);
+  game_objects[3] = NULL;
 
   return 0;
 }
