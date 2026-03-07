@@ -20,7 +20,7 @@ struct ___tile_info_t {
 
 // The information necessary to create a screen - a set of tiles displayed to the user
 struct __screen_t {
-    tile_info_t* objects;
+    const tile_info_t* objects;
     uint32_t num_objects;
 } typedef screen_t;
 

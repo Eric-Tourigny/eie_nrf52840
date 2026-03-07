@@ -36,21 +36,20 @@
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
-static lv_obj_t** colliders;                                                           // Other game objects requiring updates on the screen
+static game_object_t** colliders;                                                     // Other game objects requiring updates on the screen
 
 void init_lvgl() {
   if (!device_is_ready(display_dev)) {
     printk("Touchscreen device initialization error\n");
   }
-  game_screen = lv_obj_create(NULL);      // Create LVGL screen
-  lv_screen_load(game_screen);            // Display main game screen
   display_blanking_off(display_dev);      // Turn on screen
+  game_screen = lv_obj_create(NULL);      // Create LVGL screen
 }
 
 void init_game() {
-  lv_obj_clean(game_screen);
   init_player(game_screen);
   colliders = activate_screen(&SCREEN1, game_screen);
+  lv_screen_load(game_screen);            // Display main game screen
 }
 
 void update_game() {
