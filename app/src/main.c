@@ -28,17 +28,14 @@
 
 #define SLEEP_MS 33        // 30 FPS
 
-#define MAX_NUM_GAME_OBJECTS 100
 
 #define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
 #define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
-extern const lv_image_dsc_t SpriteRockTile;
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
 
-static game_object_t* game_objects[MAX_NUM_GAME_OBJECTS];
 
 uint8_t init_screen() {
   lv_obj_clean(game_screen);
