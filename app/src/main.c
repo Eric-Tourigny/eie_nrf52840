@@ -19,6 +19,7 @@
 #include "controller.h"
 #include "game_object.h"
 #include "player.h"
+#include "screen.h"
 
 #ifdef __INTELLISENSE__
   #include <modules/lib/gui/lvgl/lvgl.h>
@@ -35,35 +36,25 @@
 
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
+static lv_obj_t** colliders;                                                           // Other game objects requiring updates on the screen
 
-
-uint8_t init_screen() {
-  lv_obj_clean(game_screen);
-  init_player(game_screen);
-
-  game_objects[0] = create_game_object(0, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
-  game_objects[1] = create_game_object(15, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
-  game_objects[2] = create_game_object(30, 15 * 15, 15, 15, &SpriteRockTile, game_screen);
-  game_objects[3] = NULL;
-
-  return 0;
-}
-
-uint8_t init_game() {
+void init_lvgl() {
   if (!device_is_ready(display_dev)) {
     printk("Touchscreen device initialization error\n");
-    return 1;
   }
-
-  game_screen = lv_obj_create(NULL);                                      // Create LVGL screen
-
-  return 0;
+  game_screen = lv_obj_create(NULL);      // Create LVGL screen
+  lv_screen_load(game_screen);            // Display main game screen
+  display_blanking_off(display_dev);      // Turn on screen
 }
 
-uint8_t update_game() {
-  update_player_location(game_objects);
+void init_game() {
+  lv_obj_clean(game_screen);
+  init_player(game_screen);
+  colliders = activate_screen(&SCREEN1, game_screen);
+}
 
-  return 0;
+void update_game() {
+  update_player_location(colliders);
 }
 
 int main(void) {
@@ -79,34 +70,13 @@ int main(void) {
     printk("Bluetooth initialization error\n");
     return 0;
   }
-  if (0 > init_game()) {
-    printk("Error initializing game\n");
-    return 0;
-  }
 
-
-
-  display_blanking_off(display_dev);    // Turn on screen
-  init_screen();
-  lv_screen_load(game_screen);          // Display main game screen
+  init_lvgl();
+  init_game();
 
   while(1) {
     lv_timer_handler();
     update_game();
-
-    if (button_check_clear_pressed(BUTTON_ID_A)) {
-      if (joystick_state.h == JOYSTICK_LEFT) {
-        LED_toggle(LED0);
-      } else if (joystick_state.h == JOYSTICK_RIGHT) {
-        LED_toggle(LED3);
-      }
-      
-      if (joystick_state.v == JOYSTICK_DOWN) {
-        LED_toggle(LED2);
-      } else if (joystick_state.v == JOYSTICK_UP) {
-        LED_toggle(LED1);
-      }
-    }
 
     k_msleep(SLEEP_MS);
   }
