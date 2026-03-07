@@ -32,30 +32,23 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
       break;
   }
   
-  // Apply velocity to update player position
+  // Find player x position ignoring collisions
   int32_t new_x = player.obj.pos.x + player.vel.x;
-  int32_t new_y = player.obj.pos.y + player.vel.y;
 
-  // Check for collisions which each supplied game object
+  // Check for collisions after applying horizontal motion
   for (int i = 0; i < num_colliders; i++) {
     game_object_t* obj = &colliders[i];
 
-    bool is_right_of_left        = new_x + player.obj.w >= obj->pos.x;
-    bool is_left_of_left_hitbox  = new_x + player.obj.w <= obj->pos.x + HORIZONTAL_HITBOX_SUBPIXEL_THICKNESS;
+    bool is_right_of_left        = new_x + player.obj.w > obj->pos.x;
+    bool is_left_of_left_hitbox  = new_x + player.obj.w < obj->pos.x + HORIZONTAL_HITBOX_SUBPIXEL_THICKNESS;
     bool was_left_of_left        = player.obj.pos.x + player.obj.w <= obj->pos.x;
 
-    bool is_left_of_right        = new_x <= obj->pos.x + obj->w;
-    bool is_right_of_right_hitbox= new_x >= obj->pos.x + obj->w - HORIZONTAL_HITBOX_SUBPIXEL_THICKNESS;
+    bool is_left_of_right        = new_x < obj->pos.x + obj->w;
+    bool is_right_of_right_hitbox= new_x > obj->pos.x + obj->w - HORIZONTAL_HITBOX_SUBPIXEL_THICKNESS;
     bool was_right_of_right      = player.obj.pos.x >= obj->pos.x + obj->w;
 
-    bool within_horizontal_range = is_right_of_left && is_left_of_right;
-
-    bool is_below_top            = new_y + player.obj.h >= obj->pos.y;
-    bool is_above_top_hitbox     = new_y + player.obj.h <= obj->pos.y + VERTICAL_HITBOX_SUBPIXEL_THICKNESS;
-
-    bool is_above_bottom         = new_y <= obj->pos.y + obj->h;
-    bool is_below_bottom_hitbox  = new_y >= obj->pos.y + obj->h - VERTICAL_HITBOX_SUBPIXEL_THICKNESS;
-
+    bool is_below_top            = player.obj.pos.y + player.obj.h > obj->pos.y;
+    bool is_above_bottom         = player.obj.pos.y < obj->pos.y + obj->h;
     bool within_vertical_range   = is_below_top && is_above_bottom;
 
 
@@ -68,7 +61,29 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
     {
       new_x = obj->pos.x + obj->w;
     }
-    else if (is_below_top && is_above_top_hitbox && within_horizontal_range)                                // Standing on the ground
+  }
+
+  // Update actual player x position
+  player.obj.pos.x = new_x;
+  
+  // Find player y position ignoring collisions
+  int32_t new_y = player.obj.pos.y + player.vel.y;
+
+  // Check for collisions after applying vertical motion
+  for (int i = 0; i < num_colliders; i++) {
+    game_object_t* obj = &colliders[i];
+
+    bool is_right_of_left        = player.obj.pos.x + player.obj.w > obj->pos.x;
+    bool is_left_of_right        = player.obj.pos.x < obj->pos.x + obj->w;
+    bool within_horizontal_range = is_right_of_left && is_left_of_right;
+
+    bool is_below_top            = new_y + player.obj.h > obj->pos.y;
+    bool is_above_top_hitbox     = new_y + player.obj.h < obj->pos.y + VERTICAL_HITBOX_SUBPIXEL_THICKNESS;
+
+    bool is_above_bottom         = new_y < obj->pos.y + obj->h;
+    bool is_below_bottom_hitbox  = new_y > obj->pos.y + obj->h - VERTICAL_HITBOX_SUBPIXEL_THICKNESS;
+
+    if (is_below_top && is_above_top_hitbox && within_horizontal_range)                                // Standing on the ground
     {
       if (button_check_held(BUTTON_ID_B)) {
         player.vel.y = -1024;
@@ -84,8 +99,7 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
     }
   }
 
-  // Update internal player position
-  player.obj.pos.x = new_x;
+  // Update actual player y position
   player.obj.pos.y = new_y;
 
   // Update player sprite position
