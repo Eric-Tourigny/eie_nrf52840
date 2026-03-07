@@ -85,8 +85,8 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
 
     if (is_below_top && is_above_top_hitbox && within_horizontal_range)                                // Standing on the ground
     {
-      if (button_check_held(BUTTON_ID_B)) {
-        player.vel.y = -1024;
+      if (button_check_clear_pressed(BUTTON_ID_B)) {
+        player.vel.y = -JUMP_SPEED;
       } else {
         player.vel.y = 0;
       }
