@@ -7,6 +7,9 @@ static game_object_t game_objects[MAX_NUM_GAME_OBJECTS + 1];
 static game_object_list_t game_object_list = {.game_objects = game_objects, .len = 0};
 
 game_object_list_t* activate_screen(screen_t* screen, lv_obj_t* parent) {
+  // Set parent's background color
+  lv_obj_set_style_bg_color(parent, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);
+  
   // Create the game objects for the new screen
   for (int i = 0; i < screen->num_objects; i++) {
     const tile_info_t* tile_info = &screen->objects[i];
