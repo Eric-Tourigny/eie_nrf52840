@@ -26,7 +26,13 @@ struct __screen_t {
 
 extern screen_t SCREEN1;
 
+// An array of game objects, with associated length
+struct __game_object_list_t {
+    uint32_t len;
+    game_object_t* game_objects;
+} typedef game_object_list_t;
+
 /*
  * Set `screen` as the active screen, destroying the objects on the old screen and placing the objects for the new screen onto `parent`.
  */
-game_object_t** activate_screen(screen_t* screen, lv_obj_t* parent);
+game_object_list_t* activate_screen(screen_t* screen, lv_obj_t* parent);

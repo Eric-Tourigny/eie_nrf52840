@@ -14,7 +14,7 @@ void init_player(lv_obj_t* game_screen) {
   player.vel.y = 0;
 }
 
-void update_player_location(game_object_t** colliders) {
+void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
   // Apply force of gravity
   player.vel.y += SUBPIXEL_GRAVITY;
 
@@ -36,13 +36,8 @@ void update_player_location(game_object_t** colliders) {
   int32_t new_y = player.obj.pos.y + player.vel.y;
 
   // Check for collisions which each supplied game object
-  for (int i = 0; ; i++) {
-    game_object_t* obj = colliders[i];
-
-    // List of colliders is null terminated
-    if (obj == NULL) {
-      break;
-    }
+  for (int i = 0; i < num_colliders; i++) {
+    game_object_t* obj = &colliders[i];
 
     // Check for player standing on ground
     if (new_y + player.obj.h > obj->pos.y && new_y < obj->pos.y + obj->h &&

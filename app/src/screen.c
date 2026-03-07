@@ -3,29 +3,18 @@
 
 extern const lv_image_dsc_t SpriteRockTile;
 
-static game_object_t* game_objects[MAX_NUM_GAME_OBJECTS + 1];
+static game_object_t game_objects[MAX_NUM_GAME_OBJECTS + 1];
+static game_object_list_t game_object_list = {.game_objects = game_objects, .len = 0};
 
-game_object_t** activate_screen(screen_t* screen, lv_obj_t* parent) {
-  // Free the memory used by the last screen, if any
-  for (int i = 0; ; i++) {
-    game_object_t* obj = game_objects[i];
-    if (obj == NULL) {
-      break;
-    }
-    destroy_game_object(obj);
-  }
-  
+game_object_list_t* activate_screen(screen_t* screen, lv_obj_t* parent) {
   // Create the game objects for the new screen
-  int i;
-  for (i = 0; i < screen->num_objects; i++) {
+  for (int i = 0; i < screen->num_objects; i++) {
     const tile_info_t* tile_info = &screen->objects[i];
-    game_objects[i] = create_game_object(tile_info->x, tile_info->y, TILE_WIDTH, TILE_HEIGHT, tile_info->sprite, parent);
+    init_game_object(&game_object_list.game_objects[i], tile_info->x, tile_info->y, TILE_WIDTH, TILE_HEIGHT, tile_info->sprite, parent);
   }
+  game_object_list.len = screen->num_objects;
 
-  // Place a null terminator on the game objects array, to indicate its end
-  game_objects[i] = NULL;
-
-  return game_objects;
+  return &game_object_list;
 }
 
 
@@ -83,7 +72,10 @@ static const tile_info_t screen1_tiles[] = {
   {&SpriteRockTile, 75, 90},
   {&SpriteRockTile, 75, 225},
   {&SpriteRockTile, 90, 45},
-  {&SpriteRockTile, 90, 60}
+  {&SpriteRockTile, 90, 60},
+  {&SpriteRockTile, 90, 75},
+  {&SpriteRockTile, 90, 225},
+  {&SpriteRockTile, 105, 60},
 };
 
 screen_t SCREEN1 = {

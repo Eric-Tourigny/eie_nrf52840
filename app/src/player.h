@@ -18,4 +18,4 @@ void init_player(lv_obj_t* game_screen);
 /*
  * Update the players location and perform collisions for a particular frame
  */
-void update_player_location(game_object_t** colliders);
+void update_player_location(game_object_t* colliders, uint32_t num_colliders);
