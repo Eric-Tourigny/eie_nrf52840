@@ -35,9 +35,23 @@ void destroy_game_object(game_object_t* obj) {
   k_free(obj);
 }
 
-void set_game_object_sprite(game_object_t* obj, lv_image_dsc_t* sprite) {
+void set_game_object_sprite(game_object_t* obj, const lv_image_dsc_t* sprite) {
   if (sprite != obj->sprite) {
     obj->sprite = sprite;
     lv_image_set_src(obj->image, sprite);
   }
+}
+
+bool check_collision(game_object_t* obj1, game_object_t* obj2) {
+  // Check if the hitbox's horizontal ranges overlap
+  bool is_right_of_left        = obj1->pos.x + obj1->w > obj2->pos.x;
+  bool is_left_of_right        = obj1->pos.x < obj2->pos.x + obj2->w;
+  bool within_horizontal_range = is_right_of_left && is_left_of_right;
+
+  // Check if the hitbox's vertical ranges overlap
+  bool is_below_top            = obj1->pos.y + obj1->h > obj2->pos.y;
+  bool is_above_bottom         = obj1->pos.y < obj2->pos.y + obj2->h;
+  bool within_vertical_range   = is_below_top && is_above_bottom;
+
+  return within_horizontal_range && within_vertical_range;
 }

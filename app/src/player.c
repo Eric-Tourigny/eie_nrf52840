@@ -44,77 +44,43 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
       break;
   }
   
-  // Find player x position ignoring collisions
-  int32_t new_x = player.obj.pos.x + player.vel.x;
+  // Update player x position ignoring collisions
+  player.obj.pos.x += player.vel.x;
 
   // Check for collisions after applying horizontal motion
   for (int i = 0; i < num_colliders; i++) {
     game_object_t* obj = &colliders[i];
-
-    bool is_right_of_left        = new_x + player.obj.w > obj->pos.x;
-    bool is_left_of_right        = new_x < obj->pos.x + obj->w;
-    bool within_horizontal_range = is_right_of_left && is_left_of_right;
-
-    bool is_below_top            = player.obj.pos.y + player.obj.h > obj->pos.y;
-    bool is_above_bottom         = player.obj.pos.y < obj->pos.y + obj->h;
-    bool within_vertical_range   = is_below_top && is_above_bottom;
-
-    bool is_moving_right         = player.vel.x > 0;
-
-    if (within_horizontal_range && within_vertical_range)            
-    {
-      if (is_moving_right)                                      // Collision with the left wall
-      {
-        new_x = obj->pos.x - player.obj.w;
+    if (check_collision(&player.obj, obj)) {
+      if (player.vel.x > 0) {                        // If moving right, collision with the left wall
+        player.obj.pos.x = obj->pos.x - player.obj.w;
       }
-      else                                                      // Collision with right wall
-      {
-        new_x = obj->pos.x + obj->w;
+      else {                                        // Collision with right wall
+        player.obj.pos.x = obj->pos.x + obj->w;
       }
     }
   }
-
-  // Update actual player x position
-  player.obj.pos.x = new_x;
   
-  // Find player y position ignoring collisions
-  int32_t new_y = player.obj.pos.y + player.vel.y;
+  // Update player y position ignoring collisions
+  player.obj.pos.y += player.vel.y;
 
   // Check for collisions after applying vertical motion
   for (int i = 0; i < num_colliders; i++) {
     game_object_t* obj = &colliders[i];
-
-    bool is_right_of_left        = player.obj.pos.x + player.obj.w > obj->pos.x;
-    bool is_left_of_right        = player.obj.pos.x < obj->pos.x + obj->w;
-    bool within_horizontal_range = is_right_of_left && is_left_of_right;
-
-    bool is_below_top            = new_y + player.obj.h > obj->pos.y;
-    bool is_above_bottom         = new_y < obj->pos.y + obj->h;
-    bool within_vertical_range   = is_below_top && is_above_bottom;
-
-    bool is_moving_down          = player.vel.y > 0;
-
-    if (within_horizontal_range && within_vertical_range)                                
-    {
-      if (is_moving_down)               // Standing on the ground
-      {
+    if (check_collision(&player.obj, obj)) {
+      if (player.vel.y > 0) {             // If moving down, must be standing on the ground
         if (button_check_clear_pressed(BUTTON_ID_B)) {
           player.vel.y = -JUMP_SPEED;
         } else {
           player.vel.y = 0;
         }
-        new_y = obj->pos.y - player.obj.h;
+        player.obj.pos.y = obj->pos.y - player.obj.h;
       }
-      else                              // Hitting the ceiling
-      {
+      else {                             // Hitting the ceiling
         player.vel.y = 0;
-        new_y = obj->pos.y + obj->h;
+        player.obj.pos.y = obj->pos.y + obj->h;
       }
     }
   }
-
-  // Update actual player y position
-  player.obj.pos.y = new_y;
 
   // Update player sprite position
   lv_obj_set_pos(player.obj.image, player.obj.pos.x >> SUBPIXEL_SHIFT, player.obj.pos.y >> SUBPIXEL_SHIFT);
