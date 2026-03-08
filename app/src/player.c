@@ -95,12 +95,16 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
         player.state = PLAYER_FALLING;
         break;
       case PLAYER_FALLING:
-        player.frames_airborne += 1;
-        if (player.frames_airborne <= COYOTE_FRAMES) {
+        if (player.frames_airborne < COYOTE_FRAMES) {
           can_jump = true;
         }
+        player.frames_airborne += 1;
         break;
       case PLAYER_JUMPING:
+        if (player.frames_airborne <= FULL_JUMP_DURATION && !button_check_held(BUTTON_ID_B)) {
+          int32_t proportional_starting_velocity = - JUMP_SPEED * (FULL_JUMP_DURATION - player.frames_airborne) / FULL_JUMP_DURATION;
+          player.vel.y = proportional_starting_velocity + SUBPIXEL_GRAVITY * (player.frames_airborne + 1);
+        }
         player.frames_airborne += 1;
         break;
     }
