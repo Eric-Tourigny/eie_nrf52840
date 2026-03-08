@@ -76,7 +76,7 @@ static uint8_t button_update_func(struct bt_conn* conn, struct bt_gatt_subscribe
 static uint8_t joystick_update_func(struct bt_conn* conn, struct bt_gatt_subscribe_params* params, const void* data, uint16_t length);
 
 /***************************************************************************************************************************************
- * Global Variables
+ * Variable Definitions
  ***************************************************************************************************************************************/
 
 // The UUIDs for services and characteristics

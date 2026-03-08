@@ -19,7 +19,8 @@ struct __vector2_t {
 
 // Represents an object within the game, which is displayed on the screen with the LVGL image `sprite` at (`pos.x`, `pos.y`)
 struct __game_object_t {
-  lv_obj_t* sprite;
+  lv_obj_t* image;
+  lv_image_dsc_t* sprite;
   vector2_t pos;
   int32_t w;
   int32_t h;
@@ -43,3 +44,8 @@ game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h
  * Clear the resources for and deallocate the memory for the game object `obj`, allocated through `create_game_object`
  */
 void destroy_game_object(game_object_t* obj);
+
+/*
+ * Update `obj`'s image to display `sprite`, if it different then it's current sprite
+ */
+void set_game_object_sprite(game_object_t* obj, lv_image_dsc_t* sprite);

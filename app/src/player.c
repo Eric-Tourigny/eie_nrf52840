@@ -2,12 +2,22 @@
 #include "controller.h"
 #include <zephyr/sys/printk.h>
 
-// Player Sprite Source
-extern const lv_image_dsc_t SpritePlayer; 
+
+/***************************************************************************************************************************************
+ * Variables
+ ***************************************************************************************************************************************/
+
+ // Player Sprite Sources
+extern const lv_image_dsc_t SpritePlayer;
+extern const lv_image_dsc_t SpritePlayerFlipped;
 
 // Player object
 static player_t player;
 
+
+/***************************************************************************************************************************************
+ * Global Function Definitions
+ ***************************************************************************************************************************************/
 
 void init_player(lv_obj_t* game_screen) {
   init_game_object(&player.obj, 15, 15 * 10, PLAYER_WIDTH, PLAYER_HEIGHT, &SpritePlayer, game_screen);
@@ -23,11 +33,13 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
   switch (joystick_state.h) {
     case JOYSTICK_LEFT:
       player.vel.x = -PLAYER_HORIZONTAL_SUBPIXEL_SPEED;
+      set_game_object_sprite(&player.obj, &SpritePlayerFlipped);
       break;
     case JOYSTICK_HORIZONTAL_NEUTRAL:
       player.vel.x = 0;
       break;
     case JOYSTICK_RIGHT:
+      set_game_object_sprite(&player.obj, &SpritePlayer);
       player.vel.x = PLAYER_HORIZONTAL_SUBPIXEL_SPEED;
       break;
   }
@@ -105,5 +117,5 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
   player.obj.pos.y = new_y;
 
   // Update player sprite position
-  lv_obj_set_pos(player.obj.sprite, player.obj.pos.x >> SUBPIXEL_SHIFT, player.obj.pos.y >> SUBPIXEL_SHIFT);
+  lv_obj_set_pos(player.obj.image, player.obj.pos.x >> SUBPIXEL_SHIFT, player.obj.pos.y >> SUBPIXEL_SHIFT);
 }
