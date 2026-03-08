@@ -5,7 +5,9 @@ TILE_WIDTH = 15
 TILE_HEIGHT = 15
 
 TILE_MAP: dict[tuple[int, ...], str] = {
-    (101, 101, 101, 255): "SpriteRockTile"
+    (101, 101, 101, 255): "SpriteRockTile",
+    (59, 145, 56, 255): "SpriteGrassTile",
+    (162, 93, 7, 255): "SpriteDirtTile"
 }
 
 def process_image(source: str):
