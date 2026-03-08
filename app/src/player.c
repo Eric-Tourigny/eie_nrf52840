@@ -23,6 +23,8 @@ void init_player(lv_obj_t* game_screen) {
   init_game_object(&player.obj, 15, 15 * 10, PLAYER_WIDTH, PLAYER_HEIGHT, &SpritePlayer, game_screen);
   player.vel.x = 0;
   player.vel.y = 0;
+  player.state = PLAYER_FALLING;
+  player.frames_airborne = 0;
 }
 
 void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
@@ -64,21 +66,50 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
   player.obj.pos.y += player.vel.y;
 
   // Check for collisions after applying vertical motion
+  bool is_grounded = false;
   for (int i = 0; i < num_colliders; i++) {
     game_object_t* obj = &colliders[i];
     if (check_collision(&player.obj, obj)) {
       if (player.vel.y > 0) {             // If moving down, must be standing on the ground
-        if (button_check_clear_pressed(BUTTON_ID_B)) {
-          player.vel.y = -JUMP_SPEED;
-        } else {
-          player.vel.y = 0;
-        }
+        is_grounded = true;
         player.obj.pos.y = obj->pos.y - player.obj.h;
       }
       else {                             // Hitting the ceiling
         player.vel.y = 0;
         player.obj.pos.y = obj->pos.y + obj->h;
       }
+    }
+  }
+
+  bool can_jump = false;
+
+  // Update player state
+  if (is_grounded) {
+    player.state = PLAYER_GROUNDED;
+    player.frames_airborne = 0;
+    player.vel.y = 0;
+    can_jump = true;
+  } else {
+    switch(player.state) {
+      case PLAYER_GROUNDED:
+        player.state = PLAYER_FALLING;
+        break;
+      case PLAYER_FALLING:
+        player.frames_airborne += 1;
+        if (player.frames_airborne <= COYOTE_FRAMES) {
+          can_jump = true;
+        }
+        break;
+      case PLAYER_JUMPING:
+        player.frames_airborne += 1;
+        break;
+    }
+  }
+
+  if (can_jump) {
+    if (button_check_clear_pressed(BUTTON_ID_B)) {
+      player.state = PLAYER_JUMPING;
+      player.vel.y = -JUMP_SPEED;
     }
   }
 

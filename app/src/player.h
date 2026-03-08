@@ -6,14 +6,24 @@
 #define SUBPIXEL_GRAVITY 128
 #define PLAYER_HORIZONTAL_SUBPIXEL_SPEED 512
 #define JUMP_SPEED 2048
+#define FULL_JUMP_DURATION 5 
+#define COYOTE_FRAMES 3
 
 // Constants based on player sprite
 #define PLAYER_WIDTH 11
 #define PLAYER_HEIGHT 15
 
+enum __player_state_t {
+  PLAYER_GROUNDED,
+  PLAYER_FALLING,
+  PLAYER_JUMPING
+} typedef player_state_t;
+
 struct __player_t {
   game_object_t obj;
   vector2_t vel;
+  player_state_t state;
+  int16_t frames_airborne;
 } typedef player_t;
 
 /*
