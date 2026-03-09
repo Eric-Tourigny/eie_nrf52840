@@ -4,7 +4,12 @@
 
 
 #define SCREEN_BACKGROUND_COLOR 0x3c88cf    // The hex color to set the background canvas to
-#define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
+
+// Pixel width of physical screen
+#define SCREEN_TRUE_WIDTH (320 << SUBPIXEL_SHIFT)
+
+// Pixel width and height of display screen - rest is blanked out
+#define SCREEN_WIDTH (315 << SUBPIXEL_SHIFT)
 #define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
 #define STARTING_SCREEN_ROW 3

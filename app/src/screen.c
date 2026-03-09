@@ -31,6 +31,15 @@ void init_screen() {
   game_screen = lv_obj_create(NULL);                                                            // Create LVGL screen
   init_player(game_screen);                                                                     // Initialize the player
   lv_obj_set_style_bg_color(game_screen, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);  // Set background color
+
+  // Create a rectangle to block off the right few pixels of the screen, which aren't used
+  lv_obj_t* blanking_rectangle = lv_obj_create(game_screen);
+  lv_obj_set_pos(blanking_rectangle, (SCREEN_WIDTH >> SUBPIXEL_SHIFT), 0);
+  lv_obj_set_size(blanking_rectangle, (SCREEN_TRUE_WIDTH - SCREEN_WIDTH) >> SUBPIXEL_SHIFT, SCREEN_HEIGHT >> SUBPIXEL_SHIFT);
+  lv_obj_set_style_bg_color(blanking_rectangle, lv_color_hex(0x000000), LV_PART_MAIN);
+  lv_obj_set_style_border_width(blanking_rectangle, 0, LV_PART_MAIN);
+  lv_obj_set_style_radius(blanking_rectangle, 0, LV_PART_MAIN);
+
   activate_screen(STARTING_SCREEN_ROW, STARTING_SCREEN_COL);                                    // Activate the initial screen
   lv_screen_load(game_screen);                                                                  // Put screen on display
 }
