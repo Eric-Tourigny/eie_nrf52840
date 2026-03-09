@@ -2,22 +2,34 @@
 
 #include "game_object.h"
 
-
-#define SCREEN_BACKGROUND_COLOR 0x3c88cf    // The hex color to set the background canvas to
+// The hex color for the screen's background
+#define SCREEN_BACKGROUND_COLOR 0x3c88cf    
 
 // Pixel width of physical screen
-#define SCREEN_TRUE_WIDTH (320 << SUBPIXEL_SHIFT)
+#define SCREEN_TRUE_PX_WIDTH 320
 
-// Pixel width and height of display screen - rest is blanked out
-#define SCREEN_WIDTH (315 << SUBPIXEL_SHIFT)
-#define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
+// Pixel width and height of display screen - rest is filled with black
+#define SCREEN_PX_WIDTH 315
+#define SCREEN_PX_HEIGHT 240
 
+// Subpixel width and height of display screen
+#define SCREEN_SUBPIXEL_WIDTH (SCREEN_PX_WIDTH << SUBPIXEL_SHIFT)
+#define SCREEN_SUBPIXEL_HEIGHT (SCREEN_PX_HEIGHT << SUBPIXEL_SHIFT)
+
+// Initial screen to display
 #define STARTING_SCREEN_ROW 3
 #define STARTING_SCREEN_COL 1
 
-#define TILE_WIDTH 15                       // The width in pixels of each tile
-#define TILE_HEIGHT 15                      // The height in pixels of each tile
-#define MAX_NUM_GAME_OBJECTS 200            // The maximum number of game objects appearing on a screen
+// Pixel width and height for tiles composing world
+#define TILE_PX_WIDTH 15
+#define TILE_PX_HEIGHT 15
+
+// Subpixel width and height for tiles composing world
+#define TILE_SUBPIXEL_WIDTH (TILE_PX_WIDTH << SUBPIXEL_SHIFT)
+#define TILE_SUBPIXEL_HEIGHT (TILE_PX_HEIGHT << SUBPIXEL_SHIFT)
+
+// The maximum number of game objects appearing on a screen
+#define MAX_NUM_GAME_OBJECTS 200            
 
 // An array of game objects, with associated length
 struct __game_object_list_t {

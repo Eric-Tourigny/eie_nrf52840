@@ -34,8 +34,8 @@ void init_screen() {
 
   // Create a rectangle to block off the right few pixels of the screen, which aren't used
   lv_obj_t* blanking_rectangle = lv_obj_create(game_screen);
-  lv_obj_set_pos(blanking_rectangle, (SCREEN_WIDTH >> SUBPIXEL_SHIFT), 0);
-  lv_obj_set_size(blanking_rectangle, (SCREEN_TRUE_WIDTH - SCREEN_WIDTH) >> SUBPIXEL_SHIFT, SCREEN_HEIGHT >> SUBPIXEL_SHIFT);
+  lv_obj_set_pos(blanking_rectangle, SCREEN_PX_WIDTH, 0);
+  lv_obj_set_size(blanking_rectangle, SCREEN_TRUE_PX_WIDTH - SCREEN_PX_WIDTH, SCREEN_PX_HEIGHT);
   lv_obj_set_style_bg_color(blanking_rectangle, lv_color_hex(0x000000), LV_PART_MAIN);
   lv_obj_set_style_border_width(blanking_rectangle, 0, LV_PART_MAIN);
   lv_obj_set_style_radius(blanking_rectangle, 0, LV_PART_MAIN);
@@ -58,10 +58,10 @@ void activate_screen(int32_t row, int32_t col) {
     const tile_info_t* tile_info = &screen->objects[i];
     init_game_object(
       &game_object_list.game_objects[i], 
-      tile_info->x * TILE_WIDTH, 
-      tile_info->y * TILE_HEIGHT,
-      tile_info->w * TILE_WIDTH, 
-      tile_info->h * TILE_HEIGHT, 
+      tile_info->x * TILE_PX_WIDTH, 
+      tile_info->y * TILE_PX_HEIGHT,
+      tile_info->w * TILE_PX_WIDTH, 
+      tile_info->h * TILE_PX_HEIGHT, 
       tile_info->sprite, 
       game_screen
     );

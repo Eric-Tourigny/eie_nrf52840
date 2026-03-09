@@ -14,7 +14,7 @@ void init_game_object(game_object_t* obj, uint32_t x, uint32_t y, uint32_t w, ui
   lv_obj_set_pos(image, x, y);
   lv_obj_set_size(image, w, h);
   lv_image_set_src(image, sprite);
-  lv_image_set_inner_align(image, LV_IMAGE_ALIGN_TILE); 
+  lv_image_set_inner_align(image, LV_IMAGE_ALIGN_TILE);   // Enable tile mosaic
   obj->image = image;
   obj->sprite = sprite; 
 }
