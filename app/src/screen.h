@@ -39,16 +39,19 @@ struct __game_object_list_t {
 } typedef game_object_list_t;
 
 /*
- * Set screen (`row`, `col`) as the active screen, destroying the objects on the old screen
- * and placing the objects for the new screen onto `parent`.
+ * Initialize and activate the game screen
  */
-void activate_screen(int32_t row, int32_t col, lv_obj_t* parent);
+void init_screen();
+
+/*
+ * Set screen (`row`, `col`) as the active screen, destroying the objects on the old screen
+ */
+void activate_screen(int32_t row, int32_t col);
 
 /*
  * Shift the active screen by `row_delta`, `col_delta`, destroying the objects on the old screen
- * and placing the objects for the new screen onto `parent`.
  */
-void shift_screen(int32_t row_delta, int32_t col_delta, lv_obj_t* parent);
+void shift_screen(int32_t row_delta, int32_t col_delta);
 
 /*
  * Get all the game objects on the currently active screen

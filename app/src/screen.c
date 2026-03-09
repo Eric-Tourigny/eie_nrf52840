@@ -1,4 +1,5 @@
 #include "screen.h"
+#include "player.h"
 
 /***************************************************************************************************************************************
  * Variables
@@ -8,6 +9,9 @@
 extern const lv_image_dsc_t SpriteRockTile;
 extern const lv_image_dsc_t SpriteGrassTile;
 extern const lv_image_dsc_t SpriteDirtTile;
+
+// Currently active screen
+static lv_obj_t* game_screen;
 
 // List tracking currently active game objects
 static game_object_t game_objects[MAX_NUM_GAME_OBJECTS + 1];
@@ -22,22 +26,27 @@ static int32_t current_screen_col;
  * Global Function Definitions
  ***************************************************************************************************************************************/
 
-void activate_screen(int32_t row, int32_t col, lv_obj_t* parent) {
-  screen_t* screen = screens[row][col];
+void init_screen() {
+  game_screen = lv_obj_create(NULL);                                                            // Create LVGL screen
+  init_player(game_screen);                                                                     // Initialize the player
+  lv_obj_set_style_bg_color(game_screen, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);  // Set background color
+  activate_screen(3, 1);                                                                        // Activate the initial screen
+  lv_screen_load(game_screen);                                                                  // Put screen on display
+}
 
-  // Set parent's background color
-  lv_obj_set_style_bg_color(parent, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);
+void activate_screen(int32_t row, int32_t col) {
+  screen_t* screen = screens[row][col];
   
   // Create the game objects for the new screen
   for (int i = 0; i < screen->num_objects; i++) {
     const tile_info_t* tile_info = &screen->objects[i];
-    init_game_object(&game_object_list.game_objects[i], tile_info->x, tile_info->y, TILE_WIDTH, TILE_HEIGHT, tile_info->sprite, parent);
+    init_game_object(&game_object_list.game_objects[i], tile_info->x, tile_info->y, TILE_WIDTH, TILE_HEIGHT, tile_info->sprite, game_screen);
   }
   game_object_list.len = screen->num_objects;
 }
 
-void shift_screen(int32_t row_delta, int32_t col_delta, lv_obj_t* parent) {
-  activate_screen(current_screen_row + row_delta, current_screen_col + col_delta, parent);
+void shift_screen(int32_t row_delta, int32_t col_delta) {
+  activate_screen(current_screen_row + row_delta, current_screen_col + col_delta);
 }
 
 game_object_list_t* get_active_screen_game_objects() {

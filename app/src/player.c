@@ -106,10 +106,10 @@ void update_player_location() {
 
   // If player passes screen boundary, move to next screen
   if (player.obj.pos.x < 0) {
-    shift_screen(-1, 0, lv_obj_get_screen(player.obj.image));
+    shift_screen(-1, 0);
   }
   else if (player.obj.pos.x > SCREEN_WIDTH) {
-    shift_screen(1, 0, lv_obj_get_screen(player.obj.image));
+    shift_screen(1, 0);
   }
   
   // Update player y position ignoring collisions
@@ -130,6 +130,15 @@ void update_player_location() {
       }
     }
   }
+
+  // If player passes screen boundary, move to next screen
+  if (player.obj.pos.y < 0) {
+    shift_screen(0, -1);
+  }
+  else if (player.obj.pos.y > SCREEN_HEIGHT) {
+    shift_screen(0, 1);
+  }
+  
  
   if (is_grounded) {                              // Update player state if they are now standing on the ground
     player.state = PLAYER_GROUNDED;
