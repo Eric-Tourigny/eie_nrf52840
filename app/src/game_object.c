@@ -11,10 +11,12 @@ void init_game_object(game_object_t* obj, uint32_t x, uint32_t y, uint32_t w, ui
 
   // Create the image representing the game object
   lv_obj_t* image = lv_image_create(parent);
-  lv_image_set_src(image, sprite);
   lv_obj_set_pos(image, x, y);
+  lv_obj_set_size(image, w, h);
+  lv_image_set_src(image, sprite);
+  lv_image_set_inner_align(image, LV_IMAGE_ALIGN_TILE); 
   obj->image = image;
-  obj->sprite = sprite;
+  obj->sprite = sprite; 
 }
 
 game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const lv_image_dsc_t* image_src, lv_obj_t* parent) {

@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "player.h"
+#include "screen_info.h"
 
 /***************************************************************************************************************************************
  * Variables
@@ -46,7 +47,15 @@ void activate_screen(int32_t row, int32_t col) {
   // Create the game objects for the new screen
   for (int i = 0; i < screen->num_objects; i++) {
     const tile_info_t* tile_info = &screen->objects[i];
-    init_game_object(&game_object_list.game_objects[i], tile_info->x, tile_info->y, TILE_WIDTH, TILE_HEIGHT, tile_info->sprite, game_screen);
+    init_game_object(
+      &game_object_list.game_objects[i], 
+      tile_info->x * TILE_WIDTH, 
+      tile_info->y * TILE_HEIGHT,
+      tile_info->w * TILE_WIDTH, 
+      tile_info->h * TILE_HEIGHT, 
+      tile_info->sprite, 
+      game_screen
+    );
   }
   game_object_list.len = screen->num_objects;
 }
