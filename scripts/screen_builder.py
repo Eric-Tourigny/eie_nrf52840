@@ -50,7 +50,7 @@ def process_image(source: str):
         for screen_row in range(NUM_SCREEN_ROWS):
             for screen_col in range(NUM_SCREEN_COLS):
                 left = screen_col * (SCREEN_WIDTH - 1)
-                upper = screen_row * SCREEN_HEIGHT
+                upper = screen_row * (SCREEN_HEIGHT - 1)
                 screen = image.crop((left, upper, left + SCREEN_WIDTH, upper + SCREEN_HEIGHT))
                 pixels = screen.load()
                 statements = []
