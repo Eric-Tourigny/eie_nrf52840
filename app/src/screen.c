@@ -30,12 +30,18 @@ void init_screen() {
   game_screen = lv_obj_create(NULL);                                                            // Create LVGL screen
   init_player(game_screen);                                                                     // Initialize the player
   lv_obj_set_style_bg_color(game_screen, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);  // Set background color
-  activate_screen(3, 1);                                                                        // Activate the initial screen
+  activate_screen(STARTING_SCREEN_ROW, STARTING_SCREEN_COL);                                    // Activate the initial screen
   lv_screen_load(game_screen);                                                                  // Put screen on display
 }
 
 void activate_screen(int32_t row, int32_t col) {
+  current_screen_row = row;
+  current_screen_col = col;
   screen_t* screen = screens[row][col];
+
+  for (int i = 0; i < game_object_list.len; i++) {
+    lv_obj_delete(game_object_list.game_objects[i].image);
+  }
   
   // Create the game objects for the new screen
   for (int i = 0; i < screen->num_objects; i++) {

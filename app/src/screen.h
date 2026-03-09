@@ -11,6 +11,9 @@
 #define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
 #define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
 
+#define STARTING_SCREEN_ROW 3
+#define STARTING_SCREEN_COL 1
+
 #define TILE_WIDTH 15                       // The width in pixels of each tile
 #define TILE_HEIGHT 15                      // The height in pixels of each tile
 #define MAX_NUM_GAME_OBJECTS 200            // The maximum number of game objects appearing on a screen

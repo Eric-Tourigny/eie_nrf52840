@@ -48,6 +48,7 @@ def process_image(source: str):
     screen_names = []
     with Image.open(source) as image:
         for screen_row in range(NUM_SCREEN_ROWS):
+            row_screen_names = []
             for screen_col in range(NUM_SCREEN_COLS):
                 left = screen_col * (SCREEN_WIDTH - 1)
                 upper = screen_row * (SCREEN_HEIGHT - 1)
@@ -62,11 +63,12 @@ def process_image(source: str):
                                 statements.append(f"  {{&{TILE_MAP[px]}, {row * TILE_WIDTH}, {col * TILE_HEIGHT}}}")
 
                 screen_strings.append(SCREEN_STRING_FORMAT.format(row=screen_row, col=screen_col, statements=",\n".join(statements)))
-                screen_names.append(f"  &screen{screen_row}{screen_col}")
+                row_screen_names.append(f"&screen{screen_row}{screen_col}")
+            screen_names.append(row_screen_names)
     return OVERALL_FILE_FORMAT.format(
         extern_variables="\n".join(f"extern const lv_image_dsc_t {tile_name};" for tile_name in TILE_MAP.values()),
         screen_definitions="\n\n".join(screen_strings), 
-        screen_names=",\n".join(screen_names)
+        screen_names=",\n".join(f"  {{{", ".join(row_screen_names)}}}" for row_screen_names in screen_names)
     )
 
 

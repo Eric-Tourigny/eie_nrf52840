@@ -825,16 +825,8 @@ static screen_t screen32 = {
 };
 
 screen_t *screens[NUM_SCREEN_ROWS][NUM_SCREEN_COLS] = {
-  &screen00,
-  &screen01,
-  &screen02,
-  &screen10,
-  &screen11,
-  &screen12,
-  &screen20,
-  &screen21,
-  &screen22,
-  &screen30,
-  &screen31,
-  &screen32
+  {&screen00, &screen01, &screen02},
+  {&screen10, &screen11, &screen12},
+  {&screen20, &screen21, &screen22},
+  {&screen30, &screen31, &screen32}
 };
