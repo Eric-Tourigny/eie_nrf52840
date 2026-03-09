@@ -53,7 +53,7 @@ void init_game() {
 }
 
 void update_game() {
-  update_player_location(active_objects->game_objects, active_objects->len);
+  update_player(active_objects->game_objects, active_objects->len);
 }
 
 int main(void) {

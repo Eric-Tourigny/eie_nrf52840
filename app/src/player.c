@@ -1,6 +1,4 @@
 #include "player.h"
-#include "controller.h"
-#include <zephyr/sys/printk.h>
 
 
 /***************************************************************************************************************************************
@@ -16,19 +14,27 @@ static player_t player;
 
 
 /***************************************************************************************************************************************
- * Global Function Definitions
+ * Local Function Declarations
  ***************************************************************************************************************************************/
 
-void init_player(lv_obj_t* game_screen) {
-  init_game_object(&player.obj, 15, 15 * 10, PLAYER_WIDTH, PLAYER_HEIGHT, &SpritePlayer, game_screen);
-  player.vel.x = 0;
-  player.vel.y = 0;
-  player.state = PLAYER_FALLING;
-  player.frames_airborne = 0;
-}
+/*
+ * Set player velocity based on player's state and user inputs
+ */
+void update_player_velocity();
 
-void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
-  // Apply force of gravity
+
+/*
+ * Move player, checking for collisions with `colliders`
+ */
+void update_player_location();
+
+
+/***************************************************************************************************************************************
+ * Local Function Definitions
+ ***************************************************************************************************************************************/
+
+void update_player_velocity() {
+    // Apply force of gravity
   player.vel.y += SUBPIXEL_GRAVITY;
 
   // Move player based on joystick direction
@@ -45,7 +51,40 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
       player.vel.x = PLAYER_HORIZONTAL_SUBPIXEL_SPEED;
       break;
   }
-  
+
+  // Update player depending on their state and determine if they can jump
+  bool can_jump = false;
+  switch(player.state) {
+    case PLAYER_GROUNDED:
+      can_jump = true;
+      break;
+    case PLAYER_FALLING:
+      if (player.frames_airborne <= COYOTE_FRAMES) {
+        can_jump = true;
+      }
+      player.frames_airborne += 1;
+      break;
+    case PLAYER_JUMPING:
+      // For variable jump height, check if the player releases the jump button early
+      if (button_check_clear_released(JUMP_BUTTON)) {
+        // If the player is still moving upwards, half their remaining velocity
+        if (player.vel.y < 0) {
+          player.vel.y /= 2;
+        }
+      }
+      player.frames_airborne += 1;
+      break;
+  }
+
+  if (can_jump) {
+    if (button_check_clear_pressed(BUTTON_ID_B)) {
+      player.state = PLAYER_JUMPING;
+      player.vel.y = -JUMP_SPEED;
+    }
+  }
+}
+
+void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
   // Update player x position ignoring collisions
   player.obj.pos.x += player.vel.x;
 
@@ -80,44 +119,31 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
       }
     }
   }
-
-  bool can_jump = false;
-
-  // Update player state
-  if (is_grounded) {
+ 
+  if (is_grounded) {                              // Update player state if they are now standing on the ground
     player.state = PLAYER_GROUNDED;
     player.frames_airborne = 0;
     player.vel.y = 0;
-    can_jump = true;
-  } else {
-    switch(player.state) {
-      case PLAYER_GROUNDED:
-        player.state = PLAYER_FALLING;
-        break;
-      case PLAYER_FALLING:
-        if (player.frames_airborne <= COYOTE_FRAMES) {
-          can_jump = true;
-        }
-        player.frames_airborne += 1;
-        break;
-      case PLAYER_JUMPING:
-        if (button_check_clear_released(BUTTON_ID_B)) {
-          // If the player is still moving upwards, half their remaining velocity
-          if (player.vel.y < 0) {
-            player.vel.y /= 2;
-          }
-        }
-        player.frames_airborne += 1;
-        break;
-    }
+  } else if (player.state == PLAYER_GROUNDED) {   // Update player state if they are no longer standing on the ground
+    player.state = PLAYER_FALLING;
   }
+}
 
-  if (can_jump) {
-    if (button_check_clear_pressed(BUTTON_ID_B)) {
-      player.state = PLAYER_JUMPING;
-      player.vel.y = -JUMP_SPEED;
-    }
-  }
+/***************************************************************************************************************************************
+ * Global Function Definitions
+ ***************************************************************************************************************************************/
+
+void init_player(lv_obj_t* game_screen) {
+  init_game_object(&player.obj, 15, 15 * 10, PLAYER_WIDTH, PLAYER_HEIGHT, &SpritePlayer, game_screen);
+  player.vel.x = 0;
+  player.vel.y = 0;
+  player.state = PLAYER_FALLING;
+  player.frames_airborne = 0;
+}
+
+void update_player(game_object_t* colliders, uint32_t num_colliders) {
+  update_player_velocity();
+  update_player_location(colliders, num_colliders);
 
   // Update player sprite position
   lv_obj_set_pos(player.obj.image, player.obj.pos.x >> SUBPIXEL_SHIFT, player.obj.pos.y >> SUBPIXEL_SHIFT);

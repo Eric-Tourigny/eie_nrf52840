@@ -1,13 +1,15 @@
 #pragma once
 
 #include "game_object.h"
+#include "controller.h"
 
 // Constants controlling player motion
 #define SUBPIXEL_GRAVITY 128
 #define PLAYER_HORIZONTAL_SUBPIXEL_SPEED 512
-#define JUMP_SPEED 2048
+#define JUMP_SPEED 1920
 #define FULL_JUMP_DURATION 5 
 #define COYOTE_FRAMES 3
+#define JUMP_BUTTON BUTTON_ID_B
 
 // Constants based on player sprite
 #define PLAYER_WIDTH 11
@@ -34,4 +36,4 @@ void init_player(lv_obj_t* game_screen);
 /*
  * Update the players location and perform collisions for a particular frame
  */
-void update_player_location(game_object_t* colliders, uint32_t num_colliders);
+void update_player(game_object_t* colliders, uint32_t num_colliders);
