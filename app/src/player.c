@@ -1,4 +1,5 @@
 #include "player.h"
+#include "screen.h"
 
 
 /***************************************************************************************************************************************
@@ -84,13 +85,15 @@ void update_player_velocity() {
   }
 }
 
-void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
+void update_player_location() {
+  game_object_list_t* colliders = get_active_screen_game_objects();
+
   // Update player x position ignoring collisions
   player.obj.pos.x += player.vel.x;
 
   // Check for collisions after applying horizontal motion
-  for (int i = 0; i < num_colliders; i++) {
-    game_object_t* obj = &colliders[i];
+  for (int i = 0; i < colliders->len; i++) {
+    game_object_t* obj = &colliders->game_objects[i];
     if (check_collision(&player.obj, obj)) {
       if (player.vel.x > 0) {                        // If moving right, collision with the left wall
         player.obj.pos.x = obj->pos.x - player.obj.w;
@@ -100,14 +103,22 @@ void update_player_location(game_object_t* colliders, uint32_t num_colliders) {
       }
     }
   }
+
+  // If player passes screen boundary, move to next screen
+  if (player.obj.pos.x < 0) {
+    shift_screen(-1, 0, lv_obj_get_screen(player.obj.image));
+  }
+  else if (player.obj.pos.x > SCREEN_WIDTH) {
+    shift_screen(1, 0, lv_obj_get_screen(player.obj.image));
+  }
   
   // Update player y position ignoring collisions
   player.obj.pos.y += player.vel.y;
 
   // Check for collisions after applying vertical motion
   bool is_grounded = false;
-  for (int i = 0; i < num_colliders; i++) {
-    game_object_t* obj = &colliders[i];
+  for (int i = 0; i < colliders->len; i++) {
+    game_object_t* obj = &colliders->game_objects[i];
     if (check_collision(&player.obj, obj)) {
       if (player.vel.y > 0) {             // If moving down, must be standing on the ground
         is_grounded = true;
@@ -141,9 +152,9 @@ void init_player(lv_obj_t* game_screen) {
   player.frames_airborne = 0;
 }
 
-void update_player(game_object_t* colliders, uint32_t num_colliders) {
+void update_player() {
   update_player_velocity();
-  update_player_location(colliders, num_colliders);
+  update_player_location();
 
   // Update player sprite position
   lv_obj_set_pos(player.obj.image, player.obj.pos.x >> SUBPIXEL_SHIFT, player.obj.pos.y >> SUBPIXEL_SHIFT);

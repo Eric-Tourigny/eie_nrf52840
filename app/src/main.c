@@ -29,14 +29,8 @@
 
 #define SLEEP_MS 33        // 30 FPS
 
-
-#define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
-#define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
-
-
 static const struct device *display_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_display));   // Find display device used by LVGL
 static lv_obj_t* game_screen;                                                         // LVGL screen on which main game is displayed
-static game_object_list_t* active_objects;                                            // Other game objects requiring updates on the screen
 
 void init_lvgl() {
   if (!device_is_ready(display_dev)) {
@@ -48,12 +42,12 @@ void init_lvgl() {
 
 void init_game() {
   init_player(game_screen);
-  active_objects = activate_screen(&SCREEN1, game_screen);
+  activate_screen(3, 1, game_screen);
   lv_screen_load(game_screen);            // Display main game screen
 }
 
 void update_game() {
-  update_player(active_objects->game_objects, active_objects->len);
+  update_player();
 }
 
 int main(void) {

@@ -8,9 +8,14 @@
 #endif
 
 #define SCREEN_BACKGROUND_COLOR 0x3c88cf    // The hex color to set the background canvas to
+#define SCREEN_WIDTH (320 << SUBPIXEL_SHIFT)
+#define SCREEN_HEIGHT (240 << SUBPIXEL_SHIFT)
+
 #define TILE_WIDTH 15                       // The width in pixels of each tile
 #define TILE_HEIGHT 15                      // The height in pixels of each tile
 #define MAX_NUM_GAME_OBJECTS 200            // The maximum number of game objects appearing on a screen
+#define NUM_SCREEN_ROWS 4                   // The number of rows in the grid of screens
+#define NUM_SCREEN_COLS 3                   // The number of columns in the grid of screens
 
 // The information necessary to create the rectangle tiles making up the terrain
 struct ___tile_info_t {
@@ -34,6 +39,18 @@ struct __game_object_list_t {
 } typedef game_object_list_t;
 
 /*
- * Set `screen` as the active screen, destroying the objects on the old screen and placing the objects for the new screen onto `parent`.
+ * Set screen (`row`, `col`) as the active screen, destroying the objects on the old screen
+ * and placing the objects for the new screen onto `parent`.
  */
-game_object_list_t* activate_screen(screen_t* screen, lv_obj_t* parent);
+void activate_screen(int32_t row, int32_t col, lv_obj_t* parent);
+
+/*
+ * Shift the active screen by `row_delta`, `col_delta`, destroying the objects on the old screen
+ * and placing the objects for the new screen onto `parent`.
+ */
+void shift_screen(int32_t row_delta, int32_t col_delta, lv_obj_t* parent);
+
+/*
+ * Get all the game objects on the currently active screen
+ */
+game_object_list_t* get_active_screen_game_objects();
