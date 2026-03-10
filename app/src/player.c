@@ -107,11 +107,11 @@ void update_player_location() {
   // If player passes screen boundary, move to next screen
   if (player.obj.pos.x < 0) {
     shift_screen(0, -1);
-    player.obj.pos.x = SCREEN_SUBPIXEL_WIDTH - TILE_SUBPIXEL_WIDTH;
+    player.obj.pos.x = SCREEN_SUBPIXEL_WIDTH - TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_EXTRA - SCREEN_SUBPIXEL_RIGHT_EXTRA;
   }
   else if (player.obj.pos.x > SCREEN_SUBPIXEL_WIDTH - player.obj.w) {
     shift_screen(0, 1);
-    player.obj.pos.x = TILE_SUBPIXEL_WIDTH - player.obj.w;
+    player.obj.pos.x = TILE_SUBPIXEL_WIDTH - player.obj.w + SCREEN_SUBPIXEL_LEFT_EXTRA + SCREEN_SUBPIXEL_RIGHT_EXTRA;
   }
   
   // Update player y position ignoring collisions

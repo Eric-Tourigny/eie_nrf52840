@@ -5,11 +5,8 @@
 // The hex color for the screen's background
 #define SCREEN_BACKGROUND_COLOR 0x3c88cf    
 
-// Pixel width of physical screen
-#define SCREEN_TRUE_PX_WIDTH 320
-
 // Pixel width and height of display screen - rest is filled with black
-#define SCREEN_PX_WIDTH 315
+#define SCREEN_PX_WIDTH 320
 #define SCREEN_PX_HEIGHT 240
 
 // Subpixel width and height of display screen
@@ -27,6 +24,18 @@
 // Subpixel width and height for tiles composing world
 #define TILE_SUBPIXEL_WIDTH (TILE_PX_WIDTH << SUBPIXEL_SHIFT)
 #define TILE_SUBPIXEL_HEIGHT (TILE_PX_HEIGHT << SUBPIXEL_SHIFT)
+
+// Amount of pixels to hide past the edge of the screen
+#define SCREEN_PX_LEFT_HIDDEN 13
+#define SCREEN_PX_RIGHT_HIDDEN 12
+#define SCREEN_PX_BOTTOM_HIDDEN 7
+#define SCREEN_PX_TOP_HIDDEN 8
+
+// Margin of extra subpixels to for tiles on edge of screen
+#define SCREEN_SUBPIXEL_LEFT_EXTRA (TILE_SUBPIXEL_WIDTH - (SCREEN_PX_LEFT_HIDDEN << SUBPIXEL_SHIFT))
+#define SCREEN_SUBPIXEL_RIGHT_EXTRA (TILE_SUBPIXEL_WIDTH - (SCREEN_PX_RIGHT_HIDDEN << SUBPIXEL_SHIFT))
+#define SCREEN_SUBPIXEL_BOTTOM_EXTRA (TILE_SUBPIXEL_WIDTH - (SCREEN_PX_BOTTOM_HIDDEN << SUBPIXEL_SHIFT))
+#define SCREEN_SUBPIXEL_TOP_EXTRA (TILE_SUBPIXEL_WIDTH - (SCREEN_PX_TOP_HIDDEN << SUBPIXEL_SHIFT))
 
 // The maximum number of game objects appearing on a screen
 #define MAX_NUM_GAME_OBJECTS 200            

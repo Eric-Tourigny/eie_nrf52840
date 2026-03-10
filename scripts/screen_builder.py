@@ -6,7 +6,7 @@ import numpy as np
 
 NUM_SCREEN_ROWS = 4
 NUM_SCREEN_COLS = 3
-SCREEN_WIDTH = 21
+SCREEN_WIDTH = 23
 SCREEN_HEIGHT = 16
 
 TILE_WIDTH = 15
@@ -88,7 +88,7 @@ def process_image(source: str):
         for screen_row in range(NUM_SCREEN_ROWS):
             row_screen_names = []
             for screen_col in range(NUM_SCREEN_COLS):
-                left = screen_col * (SCREEN_WIDTH - 1)
+                left = screen_col * (SCREEN_WIDTH - 3)
                 upper = screen_row * (SCREEN_HEIGHT - 1)
                 screen = image.crop((left, upper, left + SCREEN_WIDTH, upper + SCREEN_HEIGHT))
                 statements = process_screen(screen)
