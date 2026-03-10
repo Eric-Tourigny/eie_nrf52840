@@ -12,7 +12,7 @@ extern const lv_image_dsc_t SpriteGrassTile;
 extern const lv_image_dsc_t SpriteDirtTile;
 
 static const tile_info_t screen00_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 16}
+  {&SpriteRockTile, 0, 0, 2, 17}
 };
 
 static screen_t screen00 = {
@@ -32,7 +32,7 @@ static screen_t screen01 = {
 
 
 static const tile_info_t screen02_tiles[] = {
-  {&SpriteRockTile, 21, 0, 2, 16}
+  {&SpriteRockTile, 21, 0, 2, 17}
 };
 
 static screen_t screen02 = {
@@ -42,7 +42,7 @@ static screen_t screen02 = {
 
 
 static const tile_info_t screen10_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 16}
+  {&SpriteRockTile, 0, 0, 2, 17}
 };
 
 static screen_t screen10 = {
@@ -62,16 +62,17 @@ static screen_t screen11 = {
 
 
 static const tile_info_t screen12_tiles[] = {
-  {&SpriteRockTile, 21, 0, 2, 16},
-  {&SpriteRockTile, 20, 8, 1, 8},
+  {&SpriteRockTile, 21, 0, 2, 17},
+  {&SpriteRockTile, 20, 8, 1, 9},
   {&SpriteGrassTile, 8, 11, 12, 1},
   {&SpriteGrassTile, 5, 12, 3, 1},
   {&SpriteDirtTile, 8, 12, 11, 1},
-  {&SpriteRockTile, 19, 12, 1, 4},
+  {&SpriteRockTile, 19, 12, 1, 5},
   {&SpriteRockTile, 4, 13, 11, 1},
   {&SpriteDirtTile, 15, 13, 4, 1},
   {&SpriteRockTile, 8, 14, 11, 1},
-  {&SpriteRockTile, 13, 15, 6, 1}
+  {&SpriteRockTile, 13, 15, 6, 1},
+  {&SpriteRockTile, 17, 16, 2, 1}
 };
 
 static screen_t screen12 = {
@@ -81,12 +82,13 @@ static screen_t screen12 = {
 
 
 static const tile_info_t screen20_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 16},
+  {&SpriteRockTile, 0, 0, 2, 17},
   {&SpriteRockTile, 9, 13, 2, 1},
   {&SpriteRockTile, 13, 13, 3, 1},
   {&SpriteRockTile, 20, 13, 2, 2},
   {&SpriteRockTile, 5, 14, 2, 1},
-  {&SpriteRockTile, 21, 15, 2, 1}
+  {&SpriteRockTile, 21, 15, 2, 2},
+  {&SpriteRockTile, 2, 16, 1, 1}
 };
 
 static screen_t screen20 = {
@@ -103,8 +105,10 @@ static const tile_info_t screen21_tiles[] = {
   {&SpriteRockTile, 0, 13, 2, 2},
   {&SpriteRockTile, 11, 13, 1, 1},
   {&SpriteRockTile, 13, 13, 1, 1},
-  {&SpriteRockTile, 1, 15, 2, 1},
-  {&SpriteRockTile, 17, 15, 4, 1}
+  {&SpriteRockTile, 1, 15, 2, 2},
+  {&SpriteRockTile, 17, 15, 4, 1},
+  {&SpriteRockTile, 3, 16, 1, 1},
+  {&SpriteRockTile, 18, 16, 4, 1}
 };
 
 static screen_t screen21 = {
@@ -118,7 +122,7 @@ static const tile_info_t screen22_tiles[] = {
   {&SpriteRockTile, 17, 1, 6, 1},
   {&SpriteRockTile, 19, 2, 4, 1},
   {&SpriteRockTile, 20, 3, 3, 2},
-  {&SpriteRockTile, 21, 5, 2, 11},
+  {&SpriteRockTile, 21, 5, 2, 12},
   {&SpriteGrassTile, 20, 9, 1, 1},
   {&SpriteRockTile, 5, 10, 3, 4},
   {&SpriteDirtTile, 20, 10, 1, 2},
@@ -126,10 +130,11 @@ static const tile_info_t screen22_tiles[] = {
   {&SpriteRockTile, 8, 11, 2, 2},
   {&SpriteGrassTile, 18, 11, 2, 1},
   {&SpriteRockTile, 18, 12, 3, 1},
-  {&SpriteRockTile, 13, 13, 2, 3},
+  {&SpriteRockTile, 13, 13, 2, 4},
   {&SpriteRockTile, 20, 13, 1, 1},
-  {&SpriteRockTile, 0, 15, 1, 1},
-  {&SpriteRockTile, 15, 15, 3, 1}
+  {&SpriteRockTile, 0, 15, 1, 2},
+  {&SpriteRockTile, 15, 15, 3, 2},
+  {&SpriteRockTile, 1, 16, 1, 1}
 };
 
 static screen_t screen22 = {
@@ -139,30 +144,32 @@ static screen_t screen22 = {
 
 
 static const tile_info_t screen30_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 16},
+  {&SpriteRockTile, 0, 0, 2, 17},
   {&SpriteRockTile, 21, 0, 2, 10},
   {&SpriteRockTile, 2, 1, 1, 1},
   {&SpriteRockTile, 20, 2, 1, 8},
   {&SpriteRockTile, 19, 3, 1, 5},
-  {&SpriteRockTile, 2, 4, 1, 12},
-  {&SpriteRockTile, 3, 7, 1, 9},
+  {&SpriteRockTile, 2, 4, 1, 13},
+  {&SpriteRockTile, 3, 7, 1, 10},
   {&SpriteRockTile, 6, 8, 2, 2},
   {&SpriteGrassTile, 4, 9, 2, 1},
   {&SpriteDirtTile, 4, 10, 4, 1},
   {&SpriteGrassTile, 8, 10, 1, 1},
   {&SpriteRockTile, 21, 10, 1, 1},
-  {&SpriteRockTile, 4, 11, 1, 5},
+  {&SpriteRockTile, 4, 11, 1, 6},
   {&SpriteDirtTile, 5, 11, 4, 2},
   {&SpriteGrassTile, 9, 12, 2, 1},
-  {&SpriteRockTile, 5, 13, 2, 3},
+  {&SpriteRockTile, 5, 13, 2, 4},
   {&SpriteDirtTile, 7, 13, 4, 1},
   {&SpriteGrassTile, 11, 13, 2, 1},
-  {&SpriteRockTile, 7, 14, 2, 2},
+  {&SpriteRockTile, 7, 14, 2, 3},
   {&SpriteDirtTile, 9, 14, 4, 1},
   {&SpriteGrassTile, 13, 14, 3, 1},
-  {&SpriteRockTile, 9, 15, 2, 1},
+  {&SpriteRockTile, 9, 15, 2, 2},
   {&SpriteDirtTile, 11, 15, 5, 1},
-  {&SpriteGrassTile, 16, 15, 7, 1}
+  {&SpriteGrassTile, 16, 15, 7, 1},
+  {&SpriteRockTile, 11, 16, 3, 1},
+  {&SpriteDirtTile, 14, 16, 9, 1}
 };
 
 static screen_t screen30 = {
@@ -197,14 +204,17 @@ static const tile_info_t screen31_tiles[] = {
   {&SpriteRockTile, 21, 11, 2, 2},
   {&SpriteDirtTile, 19, 12, 1, 3},
   {&SpriteGrassTile, 16, 13, 3, 1},
-  {&SpriteRockTile, 21, 13, 1, 3},
+  {&SpriteRockTile, 21, 13, 1, 4},
   {&SpriteGrassTile, 13, 14, 3, 1},
   {&SpriteDirtTile, 16, 14, 3, 2},
-  {&SpriteRockTile, 20, 14, 1, 2},
+  {&SpriteRockTile, 20, 14, 1, 3},
   {&SpriteGrassTile, 0, 15, 13, 1},
-  {&SpriteDirtTile, 13, 15, 3, 1},
-  {&SpriteRockTile, 19, 15, 1, 1},
-  {&SpriteRockTile, 22, 15, 1, 1}
+  {&SpriteDirtTile, 13, 15, 3, 2},
+  {&SpriteRockTile, 19, 15, 1, 2},
+  {&SpriteRockTile, 22, 15, 1, 2},
+  {&SpriteDirtTile, 0, 16, 13, 1},
+  {&SpriteDirtTile, 16, 16, 1, 1},
+  {&SpriteRockTile, 17, 16, 2, 1}
 };
 
 static screen_t screen31 = {
@@ -216,7 +226,7 @@ static screen_t screen31 = {
 static const tile_info_t screen32_tiles[] = {
   {&SpriteRockTile, 0, 0, 1, 3},
   {&SpriteRockTile, 13, 0, 5, 2},
-  {&SpriteRockTile, 21, 0, 2, 16},
+  {&SpriteRockTile, 21, 0, 2, 17},
   {&SpriteRockTile, 1, 1, 1, 3},
   {&SpriteRockTile, 2, 2, 1, 2},
   {&SpriteRockTile, 13, 2, 4, 5},
@@ -232,29 +242,29 @@ static const tile_info_t screen32_tiles[] = {
   {&SpriteDirtTile, 5, 7, 4, 1},
   {&SpriteRockTile, 9, 7, 3, 3},
   {&SpriteRockTile, 13, 7, 1, 2},
-  {&SpriteRockTile, 20, 7, 1, 9},
+  {&SpriteRockTile, 20, 7, 1, 10},
   {&SpriteGrassTile, 1, 8, 2, 1},
   {&SpriteDirtTile, 3, 8, 4, 1},
   {&SpriteRockTile, 7, 8, 2, 3},
-  {&SpriteRockTile, 18, 8, 2, 8},
+  {&SpriteRockTile, 18, 8, 2, 9},
   {&SpriteGrassTile, 0, 9, 1, 1},
   {&SpriteDirtTile, 1, 9, 5, 1},
   {&SpriteRockTile, 6, 9, 1, 2},
-  {&SpriteRockTile, 17, 9, 1, 7},
+  {&SpriteRockTile, 17, 9, 1, 8},
   {&SpriteDirtTile, 0, 10, 4, 1},
   {&SpriteRockTile, 4, 10, 2, 1},
   {&SpriteRockTile, 9, 10, 2, 1},
-  {&SpriteRockTile, 16, 10, 1, 6},
+  {&SpriteRockTile, 16, 10, 1, 7},
   {&SpriteDirtTile, 0, 11, 1, 3},
   {&SpriteRockTile, 1, 11, 4, 1},
-  {&SpriteRockTile, 14, 11, 2, 5},
+  {&SpriteRockTile, 14, 11, 2, 6},
   {&SpriteRockTile, 1, 12, 2, 1},
-  {&SpriteRockTile, 12, 12, 2, 4},
-  {&SpriteRockTile, 1, 13, 1, 3},
-  {&SpriteRockTile, 8, 13, 4, 3},
-  {&SpriteRockTile, 0, 14, 1, 2},
-  {&SpriteRockTile, 5, 14, 3, 2},
-  {&SpriteRockTile, 2, 15, 3, 1}
+  {&SpriteRockTile, 12, 12, 2, 5},
+  {&SpriteRockTile, 1, 13, 1, 4},
+  {&SpriteRockTile, 8, 13, 4, 4},
+  {&SpriteRockTile, 0, 14, 1, 3},
+  {&SpriteRockTile, 5, 14, 3, 3},
+  {&SpriteRockTile, 2, 15, 3, 2}
 };
 
 static screen_t screen32 = {

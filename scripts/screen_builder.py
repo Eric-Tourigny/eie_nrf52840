@@ -1,4 +1,4 @@
-# Use py scripts/screen_builder.py <image_path> > app/src/screen_info.c to update the screens
+# Use py scripts/screen_builder.py scripts/EiEScreens.png > app/src/screen_info.c to update the screens
 
 import sys
 from PIL import Image
@@ -7,7 +7,7 @@ import numpy as np
 NUM_SCREEN_ROWS = 4
 NUM_SCREEN_COLS = 3
 SCREEN_WIDTH = 23
-SCREEN_HEIGHT = 16
+SCREEN_HEIGHT = 17
 
 TILE_WIDTH = 15
 TILE_HEIGHT = 15
@@ -89,7 +89,7 @@ def process_image(source: str):
             row_screen_names = []
             for screen_col in range(NUM_SCREEN_COLS):
                 left = screen_col * (SCREEN_WIDTH - 3)
-                upper = screen_row * (SCREEN_HEIGHT - 1)
+                upper = screen_row * (SCREEN_HEIGHT - 2)
                 screen = image.crop((left, upper, left + SCREEN_WIDTH, upper + SCREEN_HEIGHT))
                 statements = process_screen(screen)
                 screen_strings.append(SCREEN_STRING_FORMAT.format(row=screen_row, col=screen_col, statements=",\n".join(statements)))

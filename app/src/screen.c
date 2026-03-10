@@ -50,7 +50,7 @@ void activate_screen(int32_t row, int32_t col) {
     init_game_object(
       &game_object_list.game_objects[i], 
       tile_info->x * TILE_PX_WIDTH - SCREEN_PX_LEFT_HIDDEN, 
-      tile_info->y * TILE_PX_HEIGHT,
+      tile_info->y * TILE_PX_HEIGHT - SCREEN_PX_TOP_HIDDEN,
       tile_info->w * TILE_PX_WIDTH, 
       tile_info->h * TILE_PX_HEIGHT, 
       tile_info->sprite, 
