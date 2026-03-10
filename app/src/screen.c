@@ -31,6 +31,7 @@ void init_screen() {
   game_screen = lv_obj_create(NULL);                                                            // Create LVGL screen
   init_player(game_screen);                                                                     // Initialize the player
   lv_obj_set_style_bg_color(game_screen, lv_color_hex(SCREEN_BACKGROUND_COLOR), LV_PART_MAIN);  // Set background color
+  lv_obj_remove_flag(game_screen, LV_OBJ_FLAG_SCROLLABLE);                                      // Don't display scroll bars
   activate_screen(STARTING_SCREEN_ROW, STARTING_SCREEN_COL);                                    // Activate the initial screen
   lv_screen_load(game_screen);                                                                  // Put screen on display
 }
