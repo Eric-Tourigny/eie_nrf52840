@@ -27,23 +27,14 @@ struct __game_object_t {
 } typedef game_object_t;
 
 /*
- * Initialize an new game object at the memory position `obj`. 
- * Places the sprite `image_src` at (`x`, `y`) (px) relative to `parent`.
- * The objects hitbox has width `w` and height `h` (px).
+ * Display the game object on `screen`
  */
-void init_game_object(game_object_t* obj, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const lv_image_dsc_t* image_src, lv_obj_t* parent);
+void activate_game_object(game_object_t* obj, lv_obj_t* screen);
 
 /*
- * Allocate, initialize and return a new game object.
- * Places the sprite `image_src` at (`x`, `y`) (px) relative to `parent`.
- * The objects hitbox has width `w` and height `h` (px).
+ * Stop displaying the game object and free lvgl resources
  */
-game_object_t* create_game_object(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const lv_image_dsc_t* image_src, lv_obj_t* parent);
-
-/*
- * Clear the resources for and deallocate the memory for the game object `obj`, allocated through `create_game_object`
- */
-void destroy_game_object(game_object_t* obj);
+void deactivate_game_object(game_object_t* obj);
 
 /*
  * Update `obj`'s image to display `sprite`, if it different then it's current sprite

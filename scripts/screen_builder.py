@@ -4,13 +4,34 @@ import sys
 from PIL import Image
 import numpy as np
 
+# Size of grid of screens game occurs on
 NUM_SCREEN_ROWS = 4
 NUM_SCREEN_COLS = 3
-SCREEN_WIDTH = 23
-SCREEN_HEIGHT = 17
 
-TILE_WIDTH = 15
-TILE_HEIGHT = 15
+# Number of tiles loaded horizontally and vertically for the screen
+SCREEN_TILE_WIDTH = 23
+SCREEN_TILE_HEIGHT = 17
+
+# Shift applied to get subpixel positions
+SUBPIXEL_SHIFT = 8
+
+# Size of tile composing tilegrid
+TILE_PX_WIDTH = 15
+TILE_PX_HEIGHT = 15
+TILE_SUBPIXEL_WIDTH = TILE_PX_WIDTH << SUBPIXEL_SHIFT
+TILE_SUBPIXEL_HEIGHT = TILE_PX_HEIGHT << SUBPIXEL_SHIFT
+
+# Size of the physical screen
+SCREEN_PX_WIDTH = 320
+SCREEN_PX_HEIGHT = 240
+SCREEN_SUBPIXEL_WIDTH = SCREEN_PX_WIDTH << SUBPIXEL_SHIFT
+SCREEN_SUBPIXEL_HEIGHT = SCREEN_PX_HEIGHT << SUBPIXEL_SHIFT
+
+# Amount of pixels to hide past the edge of the screen
+SCREEN_SUBPIXEL_LEFT_HIDDEN = 13 << SUBPIXEL_SHIFT
+SCREEN_SUBPIXEL_RIGHT_HIDDEN = 12 << SUBPIXEL_SHIFT
+SCREEN_SUBPIXEL_BOTTOM_HIDDEN = 7 << SUBPIXEL_SHIFT
+SCREEN_SUBPIXEL_TOP_HIDDEN = 8 << SUBPIXEL_SHIFT
 
 TILE_MAP: dict[tuple[int, ...], str] = {
     (101, 101, 101, 255): "SpriteRockTile",
@@ -18,13 +39,13 @@ TILE_MAP: dict[tuple[int, ...], str] = {
     (162, 93, 7, 255): "SpriteDirtTile"
 }
 
-SCREEN_STRING_FORMAT = """static const tile_info_t screen{row}{col}_tiles[] = {{
+SCREEN_STRING_FORMAT = """static game_object_t screen{row}{col}_game_objects[] = {{
 {statements}
 }};
 
 static screen_t screen{row}{col} = {{
-  .objects = screen{row}{col}_tiles,
-  .num_objects = ARRAY_SIZE(screen{row}{col}_tiles)
+  .objects = screen{row}{col}_game_objects,
+  .num_objects = ARRAY_SIZE(screen{row}{col}_game_objects)
 }};
 """
 
@@ -51,15 +72,15 @@ def process_screen(screen: Image.Image):
         return []
     
     statements = []
-    accessed_pixels = np.zeros((SCREEN_WIDTH, SCREEN_HEIGHT))
-    for row in range(SCREEN_HEIGHT):
-        for col in range(SCREEN_WIDTH):
+    accessed_pixels = np.zeros((SCREEN_TILE_WIDTH, SCREEN_TILE_HEIGHT))
+    for row in range(SCREEN_TILE_HEIGHT):
+        for col in range(SCREEN_TILE_WIDTH):
             px = pixels[col, row]
             if not accessed_pixels[col, row] and px in TILE_MAP:
                 accessed_pixels[col, row] = 1
                 
                 width = 1
-                while col + width < SCREEN_WIDTH:
+                while col + width < SCREEN_TILE_WIDTH:
                     if accessed_pixels[col + width, row]:
                         break
                     if px != pixels[col + width, row]:
@@ -68,7 +89,7 @@ def process_screen(screen: Image.Image):
                     width += 1
         
                 height = 1
-                while row + height < SCREEN_HEIGHT:
+                while row + height < SCREEN_TILE_HEIGHT:
                     if any(accessed_pixels[col + offset, row + height] for offset in range(width)):
                         break
                     if any(px != pixels[col + offset, row + height] for offset in range(width)):
@@ -77,7 +98,11 @@ def process_screen(screen: Image.Image):
                         accessed_pixels[col + offset, row + height] = 1
                     height += 1
                 
-                statements.append(f"  {{&{TILE_MAP[px]}, {col}, {row}, {width}, {height}}}")
+                x = col * TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_HIDDEN
+                y = row * TILE_SUBPIXEL_HEIGHT - SCREEN_SUBPIXEL_TOP_HIDDEN
+                w = width * TILE_SUBPIXEL_WIDTH
+                h = height * TILE_SUBPIXEL_HEIGHT
+                statements.append(f"  {{NULL, &{TILE_MAP[px]}, {{{x}, {y}}}, {w}, {h}}}")
     return statements
 
 
@@ -88,9 +113,9 @@ def process_image(source: str):
         for screen_row in range(NUM_SCREEN_ROWS):
             row_screen_names = []
             for screen_col in range(NUM_SCREEN_COLS):
-                left = screen_col * (SCREEN_WIDTH - 3)
-                upper = screen_row * (SCREEN_HEIGHT - 2)
-                screen = image.crop((left, upper, left + SCREEN_WIDTH, upper + SCREEN_HEIGHT))
+                left = screen_col * (SCREEN_TILE_WIDTH - 3)
+                upper = screen_row * (SCREEN_TILE_HEIGHT - 2)
+                screen = image.crop((left, upper, left + SCREEN_TILE_WIDTH, upper + SCREEN_TILE_HEIGHT))
                 statements = process_screen(screen)
                 screen_strings.append(SCREEN_STRING_FORMAT.format(row=screen_row, col=screen_col, statements=",\n".join(statements)))
                 row_screen_names.append(f"&screen{screen_row}{screen_col}")

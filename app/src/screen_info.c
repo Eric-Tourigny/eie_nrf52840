@@ -11,265 +11,265 @@ extern const lv_image_dsc_t SpriteRockTile;
 extern const lv_image_dsc_t SpriteGrassTile;
 extern const lv_image_dsc_t SpriteDirtTile;
 
-static const tile_info_t screen00_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 17}
+static game_object_t screen00_game_objects[] = {
+  {NULL, &SpriteRockTile, {-3328, -2048}, 7680, 65280}
 };
 
 static screen_t screen00 = {
-  .objects = screen00_tiles,
-  .num_objects = ARRAY_SIZE(screen00_tiles)
+  .objects = screen00_game_objects,
+  .num_objects = ARRAY_SIZE(screen00_game_objects)
 };
 
 
-static const tile_info_t screen01_tiles[] = {
+static game_object_t screen01_game_objects[] = {
 
 };
 
 static screen_t screen01 = {
-  .objects = screen01_tiles,
-  .num_objects = ARRAY_SIZE(screen01_tiles)
+  .objects = screen01_game_objects,
+  .num_objects = ARRAY_SIZE(screen01_game_objects)
 };
 
 
-static const tile_info_t screen02_tiles[] = {
-  {&SpriteRockTile, 21, 0, 2, 17}
+static game_object_t screen02_game_objects[] = {
+  {NULL, &SpriteRockTile, {77312, -2048}, 7680, 65280}
 };
 
 static screen_t screen02 = {
-  .objects = screen02_tiles,
-  .num_objects = ARRAY_SIZE(screen02_tiles)
+  .objects = screen02_game_objects,
+  .num_objects = ARRAY_SIZE(screen02_game_objects)
 };
 
 
-static const tile_info_t screen10_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 17}
+static game_object_t screen10_game_objects[] = {
+  {NULL, &SpriteRockTile, {-3328, -2048}, 7680, 65280}
 };
 
 static screen_t screen10 = {
-  .objects = screen10_tiles,
-  .num_objects = ARRAY_SIZE(screen10_tiles)
+  .objects = screen10_game_objects,
+  .num_objects = ARRAY_SIZE(screen10_game_objects)
 };
 
 
-static const tile_info_t screen11_tiles[] = {
+static game_object_t screen11_game_objects[] = {
 
 };
 
 static screen_t screen11 = {
-  .objects = screen11_tiles,
-  .num_objects = ARRAY_SIZE(screen11_tiles)
+  .objects = screen11_game_objects,
+  .num_objects = ARRAY_SIZE(screen11_game_objects)
 };
 
 
-static const tile_info_t screen12_tiles[] = {
-  {&SpriteRockTile, 21, 0, 2, 17},
-  {&SpriteRockTile, 20, 8, 1, 9},
-  {&SpriteGrassTile, 8, 11, 12, 1},
-  {&SpriteGrassTile, 5, 12, 3, 1},
-  {&SpriteDirtTile, 8, 12, 11, 1},
-  {&SpriteRockTile, 19, 12, 1, 5},
-  {&SpriteRockTile, 4, 13, 11, 1},
-  {&SpriteDirtTile, 15, 13, 4, 1},
-  {&SpriteRockTile, 8, 14, 11, 1},
-  {&SpriteRockTile, 13, 15, 6, 1},
-  {&SpriteRockTile, 17, 16, 2, 1}
+static game_object_t screen12_game_objects[] = {
+  {NULL, &SpriteRockTile, {77312, -2048}, 7680, 65280},
+  {NULL, &SpriteRockTile, {73472, 28672}, 3840, 34560},
+  {NULL, &SpriteGrassTile, {27392, 40192}, 46080, 3840},
+  {NULL, &SpriteGrassTile, {15872, 44032}, 11520, 3840},
+  {NULL, &SpriteDirtTile, {27392, 44032}, 42240, 3840},
+  {NULL, &SpriteRockTile, {69632, 44032}, 3840, 19200},
+  {NULL, &SpriteRockTile, {12032, 47872}, 42240, 3840},
+  {NULL, &SpriteDirtTile, {54272, 47872}, 15360, 3840},
+  {NULL, &SpriteRockTile, {27392, 51712}, 42240, 3840},
+  {NULL, &SpriteRockTile, {46592, 55552}, 23040, 3840},
+  {NULL, &SpriteRockTile, {61952, 59392}, 7680, 3840}
 };
 
 static screen_t screen12 = {
-  .objects = screen12_tiles,
-  .num_objects = ARRAY_SIZE(screen12_tiles)
+  .objects = screen12_game_objects,
+  .num_objects = ARRAY_SIZE(screen12_game_objects)
 };
 
 
-static const tile_info_t screen20_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 17},
-  {&SpriteRockTile, 9, 13, 2, 1},
-  {&SpriteRockTile, 13, 13, 3, 1},
-  {&SpriteRockTile, 20, 13, 2, 2},
-  {&SpriteRockTile, 5, 14, 2, 1},
-  {&SpriteRockTile, 21, 15, 2, 2},
-  {&SpriteRockTile, 2, 16, 1, 1}
+static game_object_t screen20_game_objects[] = {
+  {NULL, &SpriteRockTile, {-3328, -2048}, 7680, 65280},
+  {NULL, &SpriteRockTile, {31232, 47872}, 7680, 3840},
+  {NULL, &SpriteRockTile, {46592, 47872}, 11520, 3840},
+  {NULL, &SpriteRockTile, {73472, 47872}, 7680, 7680},
+  {NULL, &SpriteRockTile, {15872, 51712}, 7680, 3840},
+  {NULL, &SpriteRockTile, {77312, 55552}, 7680, 7680},
+  {NULL, &SpriteRockTile, {4352, 59392}, 3840, 3840}
 };
 
 static screen_t screen20 = {
-  .objects = screen20_tiles,
-  .num_objects = ARRAY_SIZE(screen20_tiles)
+  .objects = screen20_game_objects,
+  .num_objects = ARRAY_SIZE(screen20_game_objects)
 };
 
 
-static const tile_info_t screen21_tiles[] = {
-  {&SpriteRockTile, 6, 11, 1, 3},
-  {&SpriteRockTile, 5, 12, 1, 1},
-  {&SpriteRockTile, 7, 12, 1, 1},
-  {&SpriteRockTile, 12, 12, 1, 2},
-  {&SpriteRockTile, 0, 13, 2, 2},
-  {&SpriteRockTile, 11, 13, 1, 1},
-  {&SpriteRockTile, 13, 13, 1, 1},
-  {&SpriteRockTile, 1, 15, 2, 2},
-  {&SpriteRockTile, 17, 15, 4, 1},
-  {&SpriteRockTile, 3, 16, 1, 1},
-  {&SpriteRockTile, 18, 16, 4, 1}
+static game_object_t screen21_game_objects[] = {
+  {NULL, &SpriteRockTile, {19712, 40192}, 3840, 11520},
+  {NULL, &SpriteRockTile, {15872, 44032}, 3840, 3840},
+  {NULL, &SpriteRockTile, {23552, 44032}, 3840, 3840},
+  {NULL, &SpriteRockTile, {42752, 44032}, 3840, 7680},
+  {NULL, &SpriteRockTile, {-3328, 47872}, 7680, 7680},
+  {NULL, &SpriteRockTile, {38912, 47872}, 3840, 3840},
+  {NULL, &SpriteRockTile, {46592, 47872}, 3840, 3840},
+  {NULL, &SpriteRockTile, {512, 55552}, 7680, 7680},
+  {NULL, &SpriteRockTile, {61952, 55552}, 15360, 3840},
+  {NULL, &SpriteRockTile, {8192, 59392}, 3840, 3840},
+  {NULL, &SpriteRockTile, {65792, 59392}, 15360, 3840}
 };
 
 static screen_t screen21 = {
-  .objects = screen21_tiles,
-  .num_objects = ARRAY_SIZE(screen21_tiles)
+  .objects = screen21_game_objects,
+  .num_objects = ARRAY_SIZE(screen21_game_objects)
 };
 
 
-static const tile_info_t screen22_tiles[] = {
-  {&SpriteRockTile, 13, 0, 10, 1},
-  {&SpriteRockTile, 17, 1, 6, 1},
-  {&SpriteRockTile, 19, 2, 4, 1},
-  {&SpriteRockTile, 20, 3, 3, 2},
-  {&SpriteRockTile, 21, 5, 2, 12},
-  {&SpriteGrassTile, 20, 9, 1, 1},
-  {&SpriteRockTile, 5, 10, 3, 4},
-  {&SpriteDirtTile, 20, 10, 1, 2},
-  {&SpriteRockTile, 3, 11, 2, 2},
-  {&SpriteRockTile, 8, 11, 2, 2},
-  {&SpriteGrassTile, 18, 11, 2, 1},
-  {&SpriteRockTile, 18, 12, 3, 1},
-  {&SpriteRockTile, 13, 13, 2, 4},
-  {&SpriteRockTile, 20, 13, 1, 1},
-  {&SpriteRockTile, 0, 15, 1, 2},
-  {&SpriteRockTile, 15, 15, 3, 2},
-  {&SpriteRockTile, 1, 16, 1, 1}
+static game_object_t screen22_game_objects[] = {
+  {NULL, &SpriteRockTile, {46592, -2048}, 38400, 3840},
+  {NULL, &SpriteRockTile, {61952, 1792}, 23040, 3840},
+  {NULL, &SpriteRockTile, {69632, 5632}, 15360, 3840},
+  {NULL, &SpriteRockTile, {73472, 9472}, 11520, 7680},
+  {NULL, &SpriteRockTile, {77312, 17152}, 7680, 46080},
+  {NULL, &SpriteGrassTile, {73472, 32512}, 3840, 3840},
+  {NULL, &SpriteRockTile, {15872, 36352}, 11520, 15360},
+  {NULL, &SpriteDirtTile, {73472, 36352}, 3840, 7680},
+  {NULL, &SpriteRockTile, {8192, 40192}, 7680, 7680},
+  {NULL, &SpriteRockTile, {27392, 40192}, 7680, 7680},
+  {NULL, &SpriteGrassTile, {65792, 40192}, 7680, 3840},
+  {NULL, &SpriteRockTile, {65792, 44032}, 11520, 3840},
+  {NULL, &SpriteRockTile, {46592, 47872}, 7680, 15360},
+  {NULL, &SpriteRockTile, {73472, 47872}, 3840, 3840},
+  {NULL, &SpriteRockTile, {-3328, 55552}, 3840, 7680},
+  {NULL, &SpriteRockTile, {54272, 55552}, 11520, 7680},
+  {NULL, &SpriteRockTile, {512, 59392}, 3840, 3840}
 };
 
 static screen_t screen22 = {
-  .objects = screen22_tiles,
-  .num_objects = ARRAY_SIZE(screen22_tiles)
+  .objects = screen22_game_objects,
+  .num_objects = ARRAY_SIZE(screen22_game_objects)
 };
 
 
-static const tile_info_t screen30_tiles[] = {
-  {&SpriteRockTile, 0, 0, 2, 17},
-  {&SpriteRockTile, 21, 0, 2, 10},
-  {&SpriteRockTile, 2, 1, 1, 1},
-  {&SpriteRockTile, 20, 2, 1, 8},
-  {&SpriteRockTile, 19, 3, 1, 5},
-  {&SpriteRockTile, 2, 4, 1, 13},
-  {&SpriteRockTile, 3, 7, 1, 10},
-  {&SpriteRockTile, 6, 8, 2, 2},
-  {&SpriteGrassTile, 4, 9, 2, 1},
-  {&SpriteDirtTile, 4, 10, 4, 1},
-  {&SpriteGrassTile, 8, 10, 1, 1},
-  {&SpriteRockTile, 21, 10, 1, 1},
-  {&SpriteRockTile, 4, 11, 1, 6},
-  {&SpriteDirtTile, 5, 11, 4, 2},
-  {&SpriteGrassTile, 9, 12, 2, 1},
-  {&SpriteRockTile, 5, 13, 2, 4},
-  {&SpriteDirtTile, 7, 13, 4, 1},
-  {&SpriteGrassTile, 11, 13, 2, 1},
-  {&SpriteRockTile, 7, 14, 2, 3},
-  {&SpriteDirtTile, 9, 14, 4, 1},
-  {&SpriteGrassTile, 13, 14, 3, 1},
-  {&SpriteRockTile, 9, 15, 2, 2},
-  {&SpriteDirtTile, 11, 15, 5, 1},
-  {&SpriteGrassTile, 16, 15, 7, 1},
-  {&SpriteRockTile, 11, 16, 3, 1},
-  {&SpriteDirtTile, 14, 16, 9, 1}
+static game_object_t screen30_game_objects[] = {
+  {NULL, &SpriteRockTile, {-3328, -2048}, 7680, 65280},
+  {NULL, &SpriteRockTile, {77312, -2048}, 7680, 38400},
+  {NULL, &SpriteRockTile, {4352, 1792}, 3840, 3840},
+  {NULL, &SpriteRockTile, {73472, 5632}, 3840, 30720},
+  {NULL, &SpriteRockTile, {69632, 9472}, 3840, 19200},
+  {NULL, &SpriteRockTile, {4352, 13312}, 3840, 49920},
+  {NULL, &SpriteRockTile, {8192, 24832}, 3840, 38400},
+  {NULL, &SpriteRockTile, {19712, 28672}, 7680, 7680},
+  {NULL, &SpriteGrassTile, {12032, 32512}, 7680, 3840},
+  {NULL, &SpriteDirtTile, {12032, 36352}, 15360, 3840},
+  {NULL, &SpriteGrassTile, {27392, 36352}, 3840, 3840},
+  {NULL, &SpriteRockTile, {77312, 36352}, 3840, 3840},
+  {NULL, &SpriteRockTile, {12032, 40192}, 3840, 23040},
+  {NULL, &SpriteDirtTile, {15872, 40192}, 15360, 7680},
+  {NULL, &SpriteGrassTile, {31232, 44032}, 7680, 3840},
+  {NULL, &SpriteRockTile, {15872, 47872}, 7680, 15360},
+  {NULL, &SpriteDirtTile, {23552, 47872}, 15360, 3840},
+  {NULL, &SpriteGrassTile, {38912, 47872}, 7680, 3840},
+  {NULL, &SpriteRockTile, {23552, 51712}, 7680, 11520},
+  {NULL, &SpriteDirtTile, {31232, 51712}, 15360, 3840},
+  {NULL, &SpriteGrassTile, {46592, 51712}, 11520, 3840},
+  {NULL, &SpriteRockTile, {31232, 55552}, 7680, 7680},
+  {NULL, &SpriteDirtTile, {38912, 55552}, 19200, 3840},
+  {NULL, &SpriteGrassTile, {58112, 55552}, 26880, 3840},
+  {NULL, &SpriteRockTile, {38912, 59392}, 11520, 3840},
+  {NULL, &SpriteDirtTile, {50432, 59392}, 34560, 3840}
 };
 
 static screen_t screen30 = {
-  .objects = screen30_tiles,
-  .num_objects = ARRAY_SIZE(screen30_tiles)
+  .objects = screen30_game_objects,
+  .num_objects = ARRAY_SIZE(screen30_game_objects)
 };
 
 
-static const tile_info_t screen31_tiles[] = {
-  {&SpriteRockTile, 1, 0, 2, 10},
-  {&SpriteRockTile, 17, 0, 4, 1},
-  {&SpriteRockTile, 3, 1, 1, 8},
-  {&SpriteRockTile, 18, 1, 4, 1},
-  {&SpriteRockTile, 0, 2, 1, 8},
-  {&SpriteRockTile, 20, 2, 3, 1},
-  {&SpriteRockTile, 4, 3, 4, 3},
-  {&SpriteRockTile, 21, 3, 2, 1},
-  {&SpriteRockTile, 8, 4, 3, 2},
-  {&SpriteRockTile, 11, 5, 1, 1},
-  {&SpriteRockTile, 4, 6, 3, 1},
-  {&SpriteRockTile, 9, 6, 2, 1},
-  {&SpriteRockTile, 14, 6, 2, 4},
-  {&SpriteRockTile, 4, 7, 1, 1},
-  {&SpriteRockTile, 13, 7, 1, 2},
-  {&SpriteRockTile, 16, 7, 1, 2},
-  {&SpriteGrassTile, 21, 8, 2, 1},
-  {&SpriteGrassTile, 20, 9, 1, 1},
-  {&SpriteDirtTile, 21, 9, 2, 2},
-  {&SpriteRockTile, 1, 10, 1, 1},
-  {&SpriteDirtTile, 20, 10, 1, 4},
-  {&SpriteGrassTile, 19, 11, 1, 1},
-  {&SpriteRockTile, 21, 11, 2, 2},
-  {&SpriteDirtTile, 19, 12, 1, 3},
-  {&SpriteGrassTile, 16, 13, 3, 1},
-  {&SpriteRockTile, 21, 13, 1, 4},
-  {&SpriteGrassTile, 13, 14, 3, 1},
-  {&SpriteDirtTile, 16, 14, 3, 2},
-  {&SpriteRockTile, 20, 14, 1, 3},
-  {&SpriteGrassTile, 0, 15, 13, 1},
-  {&SpriteDirtTile, 13, 15, 3, 2},
-  {&SpriteRockTile, 19, 15, 1, 2},
-  {&SpriteRockTile, 22, 15, 1, 2},
-  {&SpriteDirtTile, 0, 16, 13, 1},
-  {&SpriteDirtTile, 16, 16, 1, 1},
-  {&SpriteRockTile, 17, 16, 2, 1}
+static game_object_t screen31_game_objects[] = {
+  {NULL, &SpriteRockTile, {512, -2048}, 7680, 38400},
+  {NULL, &SpriteRockTile, {61952, -2048}, 15360, 3840},
+  {NULL, &SpriteRockTile, {8192, 1792}, 3840, 30720},
+  {NULL, &SpriteRockTile, {65792, 1792}, 15360, 3840},
+  {NULL, &SpriteRockTile, {-3328, 5632}, 3840, 30720},
+  {NULL, &SpriteRockTile, {73472, 5632}, 11520, 3840},
+  {NULL, &SpriteRockTile, {12032, 9472}, 15360, 11520},
+  {NULL, &SpriteRockTile, {77312, 9472}, 7680, 3840},
+  {NULL, &SpriteRockTile, {27392, 13312}, 11520, 7680},
+  {NULL, &SpriteRockTile, {38912, 17152}, 3840, 3840},
+  {NULL, &SpriteRockTile, {12032, 20992}, 11520, 3840},
+  {NULL, &SpriteRockTile, {31232, 20992}, 7680, 3840},
+  {NULL, &SpriteRockTile, {50432, 20992}, 7680, 15360},
+  {NULL, &SpriteRockTile, {12032, 24832}, 3840, 3840},
+  {NULL, &SpriteRockTile, {46592, 24832}, 3840, 7680},
+  {NULL, &SpriteRockTile, {58112, 24832}, 3840, 7680},
+  {NULL, &SpriteGrassTile, {77312, 28672}, 7680, 3840},
+  {NULL, &SpriteGrassTile, {73472, 32512}, 3840, 3840},
+  {NULL, &SpriteDirtTile, {77312, 32512}, 7680, 7680},
+  {NULL, &SpriteRockTile, {512, 36352}, 3840, 3840},
+  {NULL, &SpriteDirtTile, {73472, 36352}, 3840, 15360},
+  {NULL, &SpriteGrassTile, {69632, 40192}, 3840, 3840},
+  {NULL, &SpriteRockTile, {77312, 40192}, 7680, 7680},
+  {NULL, &SpriteDirtTile, {69632, 44032}, 3840, 11520},
+  {NULL, &SpriteGrassTile, {58112, 47872}, 11520, 3840},
+  {NULL, &SpriteRockTile, {77312, 47872}, 3840, 15360},
+  {NULL, &SpriteGrassTile, {46592, 51712}, 11520, 3840},
+  {NULL, &SpriteDirtTile, {58112, 51712}, 11520, 7680},
+  {NULL, &SpriteRockTile, {73472, 51712}, 3840, 11520},
+  {NULL, &SpriteGrassTile, {-3328, 55552}, 49920, 3840},
+  {NULL, &SpriteDirtTile, {46592, 55552}, 11520, 7680},
+  {NULL, &SpriteRockTile, {69632, 55552}, 3840, 7680},
+  {NULL, &SpriteRockTile, {81152, 55552}, 3840, 7680},
+  {NULL, &SpriteDirtTile, {-3328, 59392}, 49920, 3840},
+  {NULL, &SpriteDirtTile, {58112, 59392}, 3840, 3840},
+  {NULL, &SpriteRockTile, {61952, 59392}, 7680, 3840}
 };
 
 static screen_t screen31 = {
-  .objects = screen31_tiles,
-  .num_objects = ARRAY_SIZE(screen31_tiles)
+  .objects = screen31_game_objects,
+  .num_objects = ARRAY_SIZE(screen31_game_objects)
 };
 
 
-static const tile_info_t screen32_tiles[] = {
-  {&SpriteRockTile, 0, 0, 1, 3},
-  {&SpriteRockTile, 13, 0, 5, 2},
-  {&SpriteRockTile, 21, 0, 2, 17},
-  {&SpriteRockTile, 1, 1, 1, 3},
-  {&SpriteRockTile, 2, 2, 1, 2},
-  {&SpriteRockTile, 13, 2, 4, 5},
-  {&SpriteRockTile, 20, 2, 1, 2},
-  {&SpriteGrassTile, 8, 4, 5, 1},
-  {&SpriteRockTile, 17, 4, 1, 2},
-  {&SpriteGrassTile, 6, 5, 2, 1},
-  {&SpriteDirtTile, 8, 5, 5, 1},
-  {&SpriteGrassTile, 5, 6, 1, 1},
-  {&SpriteDirtTile, 6, 6, 6, 1},
-  {&SpriteRockTile, 12, 6, 1, 4},
-  {&SpriteGrassTile, 3, 7, 2, 1},
-  {&SpriteDirtTile, 5, 7, 4, 1},
-  {&SpriteRockTile, 9, 7, 3, 3},
-  {&SpriteRockTile, 13, 7, 1, 2},
-  {&SpriteRockTile, 20, 7, 1, 10},
-  {&SpriteGrassTile, 1, 8, 2, 1},
-  {&SpriteDirtTile, 3, 8, 4, 1},
-  {&SpriteRockTile, 7, 8, 2, 3},
-  {&SpriteRockTile, 18, 8, 2, 9},
-  {&SpriteGrassTile, 0, 9, 1, 1},
-  {&SpriteDirtTile, 1, 9, 5, 1},
-  {&SpriteRockTile, 6, 9, 1, 2},
-  {&SpriteRockTile, 17, 9, 1, 8},
-  {&SpriteDirtTile, 0, 10, 4, 1},
-  {&SpriteRockTile, 4, 10, 2, 1},
-  {&SpriteRockTile, 9, 10, 2, 1},
-  {&SpriteRockTile, 16, 10, 1, 7},
-  {&SpriteDirtTile, 0, 11, 1, 3},
-  {&SpriteRockTile, 1, 11, 4, 1},
-  {&SpriteRockTile, 14, 11, 2, 6},
-  {&SpriteRockTile, 1, 12, 2, 1},
-  {&SpriteRockTile, 12, 12, 2, 5},
-  {&SpriteRockTile, 1, 13, 1, 4},
-  {&SpriteRockTile, 8, 13, 4, 4},
-  {&SpriteRockTile, 0, 14, 1, 3},
-  {&SpriteRockTile, 5, 14, 3, 3},
-  {&SpriteRockTile, 2, 15, 3, 2}
+static game_object_t screen32_game_objects[] = {
+  {NULL, &SpriteRockTile, {-3328, -2048}, 3840, 11520},
+  {NULL, &SpriteRockTile, {46592, -2048}, 19200, 7680},
+  {NULL, &SpriteRockTile, {77312, -2048}, 7680, 65280},
+  {NULL, &SpriteRockTile, {512, 1792}, 3840, 11520},
+  {NULL, &SpriteRockTile, {4352, 5632}, 3840, 7680},
+  {NULL, &SpriteRockTile, {46592, 5632}, 15360, 19200},
+  {NULL, &SpriteRockTile, {73472, 5632}, 3840, 7680},
+  {NULL, &SpriteGrassTile, {27392, 13312}, 19200, 3840},
+  {NULL, &SpriteRockTile, {61952, 13312}, 3840, 7680},
+  {NULL, &SpriteGrassTile, {19712, 17152}, 7680, 3840},
+  {NULL, &SpriteDirtTile, {27392, 17152}, 19200, 3840},
+  {NULL, &SpriteGrassTile, {15872, 20992}, 3840, 3840},
+  {NULL, &SpriteDirtTile, {19712, 20992}, 23040, 3840},
+  {NULL, &SpriteRockTile, {42752, 20992}, 3840, 15360},
+  {NULL, &SpriteGrassTile, {8192, 24832}, 7680, 3840},
+  {NULL, &SpriteDirtTile, {15872, 24832}, 15360, 3840},
+  {NULL, &SpriteRockTile, {31232, 24832}, 11520, 11520},
+  {NULL, &SpriteRockTile, {46592, 24832}, 3840, 7680},
+  {NULL, &SpriteRockTile, {73472, 24832}, 3840, 38400},
+  {NULL, &SpriteGrassTile, {512, 28672}, 7680, 3840},
+  {NULL, &SpriteDirtTile, {8192, 28672}, 15360, 3840},
+  {NULL, &SpriteRockTile, {23552, 28672}, 7680, 11520},
+  {NULL, &SpriteRockTile, {65792, 28672}, 7680, 34560},
+  {NULL, &SpriteGrassTile, {-3328, 32512}, 3840, 3840},
+  {NULL, &SpriteDirtTile, {512, 32512}, 19200, 3840},
+  {NULL, &SpriteRockTile, {19712, 32512}, 3840, 7680},
+  {NULL, &SpriteRockTile, {61952, 32512}, 3840, 30720},
+  {NULL, &SpriteDirtTile, {-3328, 36352}, 15360, 3840},
+  {NULL, &SpriteRockTile, {12032, 36352}, 7680, 3840},
+  {NULL, &SpriteRockTile, {31232, 36352}, 7680, 3840},
+  {NULL, &SpriteRockTile, {58112, 36352}, 3840, 26880},
+  {NULL, &SpriteDirtTile, {-3328, 40192}, 3840, 11520},
+  {NULL, &SpriteRockTile, {512, 40192}, 15360, 3840},
+  {NULL, &SpriteRockTile, {50432, 40192}, 7680, 23040},
+  {NULL, &SpriteRockTile, {512, 44032}, 7680, 3840},
+  {NULL, &SpriteRockTile, {42752, 44032}, 7680, 19200},
+  {NULL, &SpriteRockTile, {512, 47872}, 3840, 15360},
+  {NULL, &SpriteRockTile, {27392, 47872}, 15360, 15360},
+  {NULL, &SpriteRockTile, {-3328, 51712}, 3840, 11520},
+  {NULL, &SpriteRockTile, {15872, 51712}, 11520, 11520},
+  {NULL, &SpriteRockTile, {4352, 55552}, 11520, 7680}
 };
 
 static screen_t screen32 = {
-  .objects = screen32_tiles,
-  .num_objects = ARRAY_SIZE(screen32_tiles)
+  .objects = screen32_game_objects,
+  .num_objects = ARRAY_SIZE(screen32_game_objects)
 };
 
 screen_t *screens[NUM_SCREEN_ROWS][NUM_SCREEN_COLS] = {

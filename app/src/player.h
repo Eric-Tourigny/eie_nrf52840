@@ -12,8 +12,8 @@
 #define JUMP_BUTTON BUTTON_ID_B
 
 // Constants based on player sprite
-#define PLAYER_WIDTH 11
-#define PLAYER_HEIGHT 15
+#define PLAYER_SUBPIXEL_WIDTH (11 << SUBPIXEL_SHIFT)
+#define PLAYER_SUBPIXEL_HEIGHT (15 << SUBPIXEL_SHIFT)
 
 enum __player_state_t {
   PLAYER_GROUNDED,

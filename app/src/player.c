@@ -11,7 +11,12 @@ extern const lv_image_dsc_t SpritePlayer;
 extern const lv_image_dsc_t SpritePlayerFlipped;
 
 // Player object
-static player_t player;
+static player_t player = {
+  {NULL, &SpritePlayer, {TILE_SUBPIXEL_WIDTH, 10 * TILE_SUBPIXEL_HEIGHT}, PLAYER_SUBPIXEL_WIDTH, PLAYER_SUBPIXEL_HEIGHT},
+  {0, 0}, 
+  PLAYER_FALLING,
+  COYOTE_FRAMES + 1   // Don't allow the player to immediately jump
+};
 
 
 /***************************************************************************************************************************************
@@ -86,14 +91,17 @@ void update_player_velocity() {
 }
 
 void update_player_location() {
-  game_object_list_t* colliders = get_active_screen_game_objects();
+  screen_t* active_screen = get_active_screen();
+  if (active_screen == NULL) {
+    return;
+  }
 
   // Update player x position ignoring collisions
   player.obj.pos.x += player.vel.x;
 
   // Check for collisions after applying horizontal motion
-  for (int i = 0; i < colliders->len; i++) {
-    game_object_t* obj = &colliders->game_objects[i];
+  for (int i = 0; i < active_screen->num_objects; i++) {
+    game_object_t* obj = &active_screen->objects[i];
     if (check_collision(&player.obj, obj)) {
       if (player.vel.x > 0) {                        // If moving right, collision with the left wall
         player.obj.pos.x = obj->pos.x - player.obj.w;
@@ -108,10 +116,12 @@ void update_player_location() {
   if (player.obj.pos.x < 0) {
     shift_screen(0, -1);
     player.obj.pos.x = SCREEN_SUBPIXEL_WIDTH - TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_EXTRA - SCREEN_SUBPIXEL_RIGHT_EXTRA;
+    active_screen = get_active_screen();
   }
   else if (player.obj.pos.x > SCREEN_SUBPIXEL_WIDTH - player.obj.w) {
     shift_screen(0, 1);
     player.obj.pos.x = TILE_SUBPIXEL_WIDTH - player.obj.w + SCREEN_SUBPIXEL_LEFT_EXTRA + SCREEN_SUBPIXEL_RIGHT_EXTRA;
+    active_screen = get_active_screen();
   }
   
   // Update player y position ignoring collisions
@@ -119,8 +129,8 @@ void update_player_location() {
 
   // Check for collisions after applying vertical motion
   bool is_grounded = false;
-  for (int i = 0; i < colliders->len; i++) {
-    game_object_t* obj = &colliders->game_objects[i];
+  for (int i = 0; i < active_screen->num_objects; i++) {
+    game_object_t* obj = &active_screen->objects[i];
     if (check_collision(&player.obj, obj)) {
       if (player.vel.y > 0) {             // If moving down, must be standing on the ground
         is_grounded = true;
@@ -158,11 +168,7 @@ void update_player_location() {
  ***************************************************************************************************************************************/
 
 void init_player(lv_obj_t* game_screen) {
-  init_game_object(&player.obj, 15, 15 * 10, PLAYER_WIDTH, PLAYER_HEIGHT, &SpritePlayer, game_screen);
-  player.vel.x = 0;
-  player.vel.y = 0;
-  player.state = PLAYER_FALLING;
-  player.frames_airborne = 0;
+  activate_game_object(&player.obj, game_screen);
 }
 
 void update_player() {
