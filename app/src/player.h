@@ -3,6 +3,10 @@
 #include "game_object.h"
 #include "controller.h"
 
+// Starting location
+#define PLAYER_STARTING_SUBPIXEL_X TILE_SUBPIXEL_WIDTH
+#define PLAYER_STARTING_SUBPIXEL_Y (TILE_SUBPIXEL_HEIGHT * 10)
+
 // Constants controlling player motion
 #define SUBPIXEL_GRAVITY 128
 #define PLAYER_HORIZONTAL_SUBPIXEL_SPEED 512

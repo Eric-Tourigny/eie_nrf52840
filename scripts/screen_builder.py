@@ -36,7 +36,12 @@ SCREEN_SUBPIXEL_TOP_HIDDEN = 8 << SUBPIXEL_SHIFT
 TILE_MAP: dict[tuple[int, ...], str] = {
     (101, 101, 101, 255): "SpriteRockTile",
     (59, 145, 56, 255): "SpriteGrassTile",
-    (162, 93, 7, 255): "SpriteDirtTile"
+    (162, 93, 7, 255): "SpriteDirtTile",
+    (255, 242, 0, 255): "SpriteCoin"
+}
+
+CALLBACK_MAP: dict[tuple[int, ...], str] = {
+    (255, 242, 0, 255): "coin_callback"
 }
 
 SCREEN_STRING_FORMAT = """static game_object_t screen{row}{col}_game_objects[] = {{
@@ -56,6 +61,7 @@ OVERALL_FILE_FORMAT = """/*
 #include "screen_info.h"
 #include "lvgl.h"
 #include "zephyr/sys/util.h"
+#include "coins.h"
 
 
 {extern_variables}
@@ -102,7 +108,8 @@ def process_screen(screen: Image.Image):
                 y = row * TILE_SUBPIXEL_HEIGHT - SCREEN_SUBPIXEL_TOP_HIDDEN
                 w = width * TILE_SUBPIXEL_WIDTH
                 h = height * TILE_SUBPIXEL_HEIGHT
-                statements.append(f"  {{NULL, &{TILE_MAP[px]}, {{{x}, {y}}}, {w}, {h}}}")
+                callback = CALLBACK_MAP.get(px, "NULL")
+                statements.append(f"  {{NULL, &{TILE_MAP[px]}, {{{x}, {y}}}, {w}, {h}, {callback}}}")
     return statements
 
 

@@ -43,5 +43,18 @@ bool check_collision(game_object_t* obj1, game_object_t* obj2) {
   bool is_above_bottom         = obj1->pos.y < obj2->pos.y + obj2->h;
   bool within_vertical_range   = is_below_top && is_above_bottom;
 
-  return within_horizontal_range && within_vertical_range;
+  if (within_horizontal_range && within_vertical_range) {
+    bool collision = true;
+
+    // Trigger object collision callbacks
+    if (obj1->collision_callback != NULL) {
+      collision &= obj1->collision_callback(obj1);
+    }
+    if (obj2->collision_callback != NULL) {
+      collision &= obj2->collision_callback(obj2);
+    }
+    return collision;
+  } else {
+    return false;
+  }
 }
