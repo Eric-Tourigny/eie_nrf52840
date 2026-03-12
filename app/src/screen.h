@@ -16,7 +16,7 @@
 
 // Initial screen to display
 #define STARTING_SCREEN_ROW 3
-#define STARTING_SCREEN_COL 1
+#define STARTING_SCREEN_COL 3
 
 // Pixel width and height for tiles composing world
 #define TILE_PX_WIDTH 15

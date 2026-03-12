@@ -6,7 +6,7 @@ import numpy as np
 
 # Size of grid of screens game occurs on
 NUM_SCREEN_ROWS = 4
-NUM_SCREEN_COLS = 3
+NUM_SCREEN_COLS = 7
 
 # Number of tiles loaded horizontally and vertically for the screen
 SCREEN_TILE_WIDTH = 23

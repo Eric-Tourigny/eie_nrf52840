@@ -9,7 +9,7 @@
 
 // Constants controlling player motion
 #define SUBPIXEL_GRAVITY 128
-#define PLAYER_HORIZONTAL_SUBPIXEL_SPEED 512
+#define PLAYER_HORIZONTAL_SUBPIXEL_SPEED 768
 #define JUMP_SPEED 1920
 #define FULL_JUMP_DURATION 5 
 #define COYOTE_FRAMES 3
