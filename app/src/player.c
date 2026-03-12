@@ -115,12 +115,12 @@ void update_player_location() {
   // If player passes screen boundary, move to next screen
   if (player.obj.pos.x < 0) {
     shift_screen(0, -1);
-    player.obj.pos.x = SCREEN_SUBPIXEL_WIDTH - TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_EXTRA - SCREEN_SUBPIXEL_RIGHT_EXTRA;
+    player.obj.pos.x += SCREEN_SUBPIXEL_WIDTH - TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_EXTRA - SCREEN_SUBPIXEL_RIGHT_EXTRA;
     active_screen = get_active_screen();
   }
   else if (player.obj.pos.x > SCREEN_SUBPIXEL_WIDTH - player.obj.w) {
     shift_screen(0, 1);
-    player.obj.pos.x = TILE_SUBPIXEL_WIDTH - player.obj.w + SCREEN_SUBPIXEL_LEFT_EXTRA + SCREEN_SUBPIXEL_RIGHT_EXTRA;
+    player.obj.pos.x += -SCREEN_SUBPIXEL_WIDTH + TILE_SUBPIXEL_WIDTH + SCREEN_SUBPIXEL_LEFT_EXTRA + SCREEN_SUBPIXEL_RIGHT_EXTRA;
     active_screen = get_active_screen();
   }
   
@@ -146,11 +146,11 @@ void update_player_location() {
   // If player passes screen boundary, move to next screen
   if (player.obj.pos.y < 0) {
     shift_screen(-1, 0);
-    player.obj.pos.y = SCREEN_SUBPIXEL_HEIGHT - SCREEN_SUBPIXEL_TOP_EXTRA - SCREEN_SUBPIXEL_BOTTOM_EXTRA;
+    player.obj.pos.y += SCREEN_SUBPIXEL_HEIGHT - SCREEN_SUBPIXEL_TOP_EXTRA - SCREEN_SUBPIXEL_BOTTOM_EXTRA;
   }
   else if (player.obj.pos.y > SCREEN_SUBPIXEL_HEIGHT - player.obj.h) {
     shift_screen(1, 0);
-    player.obj.pos.y = SCREEN_SUBPIXEL_TOP_EXTRA + SCREEN_SUBPIXEL_BOTTOM_EXTRA - player.obj.h;
+    player.obj.pos.y += -SCREEN_SUBPIXEL_HEIGHT + SCREEN_SUBPIXEL_TOP_EXTRA + SCREEN_SUBPIXEL_BOTTOM_EXTRA;
   }
   
  
