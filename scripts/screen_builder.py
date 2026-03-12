@@ -86,23 +86,24 @@ def process_screen(screen: Image.Image):
                 accessed_pixels[col, row] = 1
                 
                 width = 1
-                while col + width < SCREEN_TILE_WIDTH:
-                    if accessed_pixels[col + width, row]:
-                        break
-                    if px != pixels[col + width, row]:
-                        break
-                    accessed_pixels[col + width, row] = 1
-                    width += 1
-        
                 height = 1
-                while row + height < SCREEN_TILE_HEIGHT:
-                    if any(accessed_pixels[col + offset, row + height] for offset in range(width)):
-                        break
-                    if any(px != pixels[col + offset, row + height] for offset in range(width)):
-                        break
-                    for offset in range(width):
-                        accessed_pixels[col + offset, row + height] = 1
-                    height += 1
+                if px not in CALLBACK_MAP:  # Use mosaic for tiles without a callback
+                    while col + width < SCREEN_TILE_WIDTH:
+                        if accessed_pixels[col + width, row]:
+                            break
+                        if px != pixels[col + width, row]:
+                            break
+                        accessed_pixels[col + width, row] = 1
+                        width += 1
+            
+                    while row + height < SCREEN_TILE_HEIGHT:
+                        if any(accessed_pixels[col + offset, row + height] for offset in range(width)):
+                            break
+                        if any(px != pixels[col + offset, row + height] for offset in range(width)):
+                            break
+                        for offset in range(width):
+                            accessed_pixels[col + offset, row + height] = 1
+                        height += 1
                 
                 x = col * TILE_SUBPIXEL_WIDTH - SCREEN_SUBPIXEL_LEFT_HIDDEN
                 y = row * TILE_SUBPIXEL_HEIGHT - SCREEN_SUBPIXEL_TOP_HIDDEN

@@ -44,9 +44,9 @@ static screen_t screen01 = {
 
 
 static game_object_t screen02_game_objects[] = {
-  {NULL, &SpriteCoin, {58112, 28672}, 3840, 3840, true, coin_callback},
-  {NULL, &SpriteRockTile, {54272, 40192}, 11520, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {58112, 44032}, 3840, 3840, true, NULL}
+  {NULL, &SpriteCoin, {65792, 28672}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteRockTile, {61952, 40192}, 11520, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {65792, 44032}, 3840, 3840, true, NULL}
 };
 
 static screen_t screen02 = {
@@ -106,7 +106,9 @@ static game_object_t screen06_game_objects[] = {
   {NULL, &SpriteRockTile, {73472, 1792}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {77312, 5632}, 7680, 7680, true, NULL},
   {NULL, &SpriteRockTile, {81152, 13312}, 3840, 49920, true, NULL},
-  {NULL, &SpriteCoin, {35072, 24832}, 11520, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {35072, 24832}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {38912, 24832}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {42752, 24832}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteCoin, {31232, 28672}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteCoin, {46592, 28672}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {-3328, 40192}, 7680, 7680, true, NULL},
@@ -257,7 +259,8 @@ static game_object_t screen16_game_objects[] = {
   {NULL, &SpriteRockTile, {77312, -2048}, 7680, 7680, true, NULL},
   {NULL, &SpriteRockTile, {65792, 1792}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {81152, 5632}, 3840, 57600, true, NULL},
-  {NULL, &SpriteCoin, {77312, 17152}, 3840, 7680, true, coin_callback},
+  {NULL, &SpriteCoin, {77312, 17152}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {77312, 20992}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {77312, 32512}, 3840, 30720, true, NULL},
   {NULL, &SpriteRockTile, {73472, 44032}, 3840, 19200, true, NULL},
   {NULL, &SpriteRockTile, {15872, 51712}, 3840, 3840, true, NULL},
@@ -344,6 +347,7 @@ static screen_t screen22 = {
 
 
 static game_object_t screen23_game_objects[] = {
+  {NULL, &SpriteCoin, {77312, 36352}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {19712, 40192}, 3840, 11520, true, NULL},
   {NULL, &SpriteRockTile, {15872, 44032}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {23552, 44032}, 3840, 3840, true, NULL},
@@ -364,15 +368,13 @@ static screen_t screen23 = {
 
 
 static game_object_t screen24_game_objects[] = {
-  {NULL, &SpriteRockTile, {65792, 17152}, 7680, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {46592, 28672}, 3840, 7680, true, NULL},
-  {NULL, &SpriteRockTile, {42752, 32512}, 3840, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {65792, 32512}, 3840, 7680, true, NULL},
-  {NULL, &SpriteRockTile, {69632, 36352}, 3840, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {65792, 20992}, 7680, 3840, true, NULL},
+  {NULL, &SpriteCoin, {512, 36352}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteRockTile, {65792, 36352}, 3840, 7680, true, NULL},
+  {NULL, &SpriteRockTile, {69632, 40192}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {-3328, 44032}, 15360, 7680, true, NULL},
   {NULL, &SpriteRockTile, {12032, 47872}, 3840, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {35072, 51712}, 15360, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {58112, 59392}, 11520, 3840, true, NULL}
+  {NULL, &SpriteRockTile, {35072, 51712}, 15360, 3840, true, NULL}
 };
 
 static screen_t screen24 = {
@@ -387,11 +389,10 @@ static game_object_t screen25_game_objects[] = {
   {NULL, &SpriteRockTile, {8192, 9472}, 7680, 3840, true, NULL},
   {NULL, &SpriteRockTile, {8192, 24832}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {12032, 28672}, 3840, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {46592, 32512}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {12032, 47872}, 7680, 7680, true, NULL},
   {NULL, &SpriteRockTile, {8192, 51712}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {19712, 51712}, 3840, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {58112, 55552}, 23040, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {58112, 55552}, 26880, 3840, true, NULL},
   {NULL, &SpriteRockTile, {38912, 59392}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {65792, 59392}, 19200, 3840, true, NULL}
 };
@@ -415,9 +416,8 @@ static game_object_t screen26_game_objects[] = {
   {NULL, &SpriteRockTile, {65792, 44032}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {46592, 47872}, 7680, 15360, true, NULL},
   {NULL, &SpriteRockTile, {73472, 47872}, 3840, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {-3328, 55552}, 7680, 7680, true, NULL},
-  {NULL, &SpriteRockTile, {54272, 55552}, 11520, 7680, true, NULL},
-  {NULL, &SpriteRockTile, {4352, 59392}, 3840, 3840, true, NULL}
+  {NULL, &SpriteRockTile, {-3328, 55552}, 11520, 7680, true, NULL},
+  {NULL, &SpriteRockTile, {54272, 55552}, 11520, 7680, true, NULL}
 };
 
 static screen_t screen26 = {
@@ -471,7 +471,8 @@ static game_object_t screen31_game_objects[] = {
   {NULL, &SpriteCoin, {38912, 28672}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteCoin, {8192, 32512}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {38912, 36352}, 3840, 26880, true, NULL},
-  {NULL, &SpriteCoin, {61952, 36352}, 7680, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {61952, 36352}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {65792, 36352}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {8192, 40192}, 3840, 23040, true, NULL},
   {NULL, &SpriteCoin, {58112, 40192}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {69632, 40192}, 3840, 23040, true, NULL},
@@ -496,9 +497,10 @@ static game_object_t screen32_game_objects[] = {
   {NULL, &SpriteRockTile, {4352, 1792}, 3840, 3840, true, NULL},
   {NULL, &SpriteCoin, {65792, 5632}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {73472, 5632}, 3840, 30720, true, NULL},
-  {NULL, &SpriteCoin, {61952, 9472}, 3840, 7680, true, coin_callback},
+  {NULL, &SpriteCoin, {61952, 9472}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {69632, 9472}, 3840, 19200, true, NULL},
   {NULL, &SpriteRockTile, {4352, 13312}, 3840, 49920, true, NULL},
+  {NULL, &SpriteCoin, {61952, 13312}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {8192, 24832}, 3840, 38400, true, NULL},
   {NULL, &SpriteRockTile, {19712, 28672}, 7680, 7680, true, NULL},
   {NULL, &SpriteGrassTile, {12032, 32512}, 7680, 3840, true, NULL},
@@ -534,9 +536,12 @@ static game_object_t screen33_game_objects[] = {
   {NULL, &SpriteRockTile, {12032, 9472}, 15360, 11520, true, NULL},
   {NULL, &SpriteRockTile, {27392, 13312}, 11520, 7680, true, NULL},
   {NULL, &SpriteRockTile, {38912, 17152}, 3840, 3840, true, NULL},
+  {NULL, &SpriteCoin, {77312, 17152}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {12032, 20992}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {31232, 20992}, 7680, 3840, true, NULL},
   {NULL, &SpriteRockTile, {50432, 20992}, 7680, 15360, true, NULL},
+  {NULL, &SpriteCoin, {73472, 20992}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {81152, 20992}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {12032, 24832}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {46592, 24832}, 3840, 7680, true, NULL},
   {NULL, &SpriteRockTile, {58112, 24832}, 3840, 7680, true, NULL},
@@ -570,8 +575,12 @@ static screen_t screen33 = {
 
 
 static game_object_t screen34_game_objects[] = {
-  {NULL, &SpriteRockTile, {58112, 1792}, 11520, 3840, true, NULL},
-  {NULL, &SpriteRockTile, {65792, 5632}, 7680, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {58112, 5632}, 7680, 7680, true, NULL},
+  {NULL, &SpriteRockTile, {65792, 9472}, 3840, 7680, true, NULL},
+  {NULL, &SpriteRockTile, {69632, 13312}, 7680, 3840, true, NULL},
+  {NULL, &SpriteCoin, {512, 17152}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {-3328, 20992}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {4352, 20992}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {58112, 24832}, 3840, 3840, true, NULL},
   {NULL, &SpriteGrassTile, {512, 28672}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {23552, 28672}, 7680, 3840, true, NULL},
@@ -605,14 +614,15 @@ static screen_t screen34 = {
 
 
 static game_object_t screen35_game_objects[] = {
-  {NULL, &SpriteRockTile, {58112, -2048}, 23040, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {58112, -2048}, 26880, 3840, true, NULL},
   {NULL, &SpriteRockTile, {38912, 1792}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {65792, 1792}, 19200, 3840, true, NULL},
   {NULL, &SpriteRockTile, {73472, 5632}, 11520, 3840, true, NULL},
   {NULL, &SpriteRockTile, {77312, 9472}, 7680, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {-3328, 13312}, 3840, 3840, true, NULL},
   {NULL, &SpriteCoin, {61952, 13312}, 3840, 3840, true, coin_callback},
-  {NULL, &SpriteRockTile, {15872, 17152}, 3840, 3840, true, NULL},
   {NULL, &SpriteCoin, {58112, 17152}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteRockTile, {15872, 20992}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {65792, 20992}, 11520, 42240, true, NULL},
   {NULL, &SpriteRockTile, {31232, 24832}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {61952, 24832}, 3840, 38400, true, NULL},
@@ -623,9 +633,10 @@ static game_object_t screen35_game_objects[] = {
   {NULL, &SpriteRockTile, {42752, 32512}, 3840, 3840, true, NULL},
   {NULL, &SpriteDirtTile, {81152, 32512}, 3840, 7680, true, NULL},
   {NULL, &SpriteRockTile, {81152, 40192}, 3840, 7680, true, NULL},
-  {NULL, &SpriteCoin, {81152, 47872}, 3840, 7680, true, coin_callback},
+  {NULL, &SpriteCoin, {81152, 47872}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteGrassTile, {8192, 51712}, 15360, 3840, true, NULL},
   {NULL, &SpriteGrassTile, {54272, 51712}, 3840, 3840, true, NULL},
+  {NULL, &SpriteCoin, {81152, 51712}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteGrassTile, {-3328, 55552}, 11520, 3840, true, NULL},
   {NULL, &SpriteDirtTile, {8192, 55552}, 15360, 7680, true, NULL},
   {NULL, &SpriteGrassTile, {23552, 55552}, 30720, 3840, true, NULL},
@@ -642,13 +653,12 @@ static screen_t screen35 = {
 
 
 static game_object_t screen36_game_objects[] = {
-  {NULL, &SpriteRockTile, {-3328, -2048}, 7680, 11520, true, NULL},
+  {NULL, &SpriteRockTile, {-3328, -2048}, 11520, 11520, true, NULL},
   {NULL, &SpriteRockTile, {46592, -2048}, 19200, 7680, true, NULL},
   {NULL, &SpriteRockTile, {77312, -2048}, 7680, 65280, true, NULL},
-  {NULL, &SpriteRockTile, {4352, 1792}, 3840, 11520, true, NULL},
   {NULL, &SpriteRockTile, {46592, 5632}, 15360, 19200, true, NULL},
   {NULL, &SpriteRockTile, {73472, 5632}, 3840, 7680, true, NULL},
-  {NULL, &SpriteRockTile, {512, 9472}, 3840, 3840, true, NULL},
+  {NULL, &SpriteRockTile, {512, 9472}, 7680, 3840, true, NULL},
   {NULL, &SpriteGrassTile, {27392, 13312}, 19200, 3840, true, NULL},
   {NULL, &SpriteRockTile, {61952, 13312}, 3840, 7680, true, NULL},
   {NULL, &SpriteGrassTile, {19712, 17152}, 7680, 3840, true, NULL},
@@ -678,8 +688,11 @@ static game_object_t screen36_game_objects[] = {
   {NULL, &SpriteRockTile, {50432, 40192}, 7680, 23040, true, NULL},
   {NULL, &SpriteRockTile, {4352, 44032}, 3840, 3840, true, NULL},
   {NULL, &SpriteRockTile, {42752, 44032}, 7680, 19200, true, NULL},
-  {NULL, &SpriteCoin, {4352, 47872}, 7680, 7680, true, coin_callback},
+  {NULL, &SpriteCoin, {4352, 47872}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {8192, 47872}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {27392, 47872}, 15360, 15360, true, NULL},
+  {NULL, &SpriteCoin, {4352, 51712}, 3840, 3840, true, coin_callback},
+  {NULL, &SpriteCoin, {8192, 51712}, 3840, 3840, true, coin_callback},
   {NULL, &SpriteRockTile, {15872, 51712}, 11520, 11520, true, NULL},
   {NULL, &SpriteRockTile, {4352, 55552}, 11520, 7680, true, NULL}
 };
