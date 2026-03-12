@@ -12,7 +12,7 @@ extern const lv_image_dsc_t SpritePlayerFlipped;
 
 // Player object
 static player_t player = {
-  {NULL, &SpritePlayer, {PLAYER_STARTING_SUBPIXEL_X, PLAYER_STARTING_SUBPIXEL_Y}, PLAYER_SUBPIXEL_WIDTH, PLAYER_SUBPIXEL_HEIGHT, NULL},
+  {NULL, &SpritePlayer, {PLAYER_STARTING_SUBPIXEL_X, PLAYER_STARTING_SUBPIXEL_Y}, PLAYER_SUBPIXEL_WIDTH, PLAYER_SUBPIXEL_HEIGHT, true, NULL},
   {0, 0}, 
   PLAYER_FALLING,
   COYOTE_FRAMES + 1   // Don't allow the player to immediately jump,

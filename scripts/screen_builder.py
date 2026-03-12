@@ -109,7 +109,7 @@ def process_screen(screen: Image.Image):
                 w = width * TILE_SUBPIXEL_WIDTH
                 h = height * TILE_SUBPIXEL_HEIGHT
                 callback = CALLBACK_MAP.get(px, "NULL")
-                statements.append(f"  {{NULL, &{TILE_MAP[px]}, {{{x}, {y}}}, {w}, {h}, {callback}}}")
+                statements.append(f"  {{NULL, &{TILE_MAP[px]}, {{{x}, {y}}}, {w}, {h}, true, {callback}}}")
     return statements
 
 
@@ -138,4 +138,4 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         print(process_image(sys.argv[1]))
     else:
-        print("Requires path to image as command line argument")
+        print("Requires path to image as command line argument", file=sys.stderr)

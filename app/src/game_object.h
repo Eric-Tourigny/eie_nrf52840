@@ -24,6 +24,7 @@ struct __game_object_t {
   vector2_t pos;
   int32_t w;
   int32_t h;
+  bool exists;
   bool (*collision_callback)(struct __game_object_t* context);
 } typedef game_object_t;
 

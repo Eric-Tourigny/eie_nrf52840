@@ -3,16 +3,19 @@
 
 
 void activate_game_object(game_object_t* obj, lv_obj_t* screen) {
-  // Clear the old image, if the object is already active
-  deactivate_game_object(obj);
+  // If object doesn't still exist, ignore it
+  if (obj->exists) {
+    // Clear the old image, if the object is already active
+    deactivate_game_object(obj);
 
-  // Create the image representing the game object
-  lv_obj_t* image = lv_image_create(screen);
-  lv_obj_set_pos(image, obj->pos.x >> SUBPIXEL_SHIFT, obj->pos.y >> SUBPIXEL_SHIFT);
-  lv_obj_set_size(image, obj->w >> SUBPIXEL_SHIFT, obj->h >> SUBPIXEL_SHIFT);
-  lv_image_set_src(image, obj->sprite);
-  lv_image_set_inner_align(image, LV_IMAGE_ALIGN_TILE);   // Enable tile mosaic
-  obj->image = image;
+    // Create the image representing the game object
+    lv_obj_t* image = lv_image_create(screen);
+    lv_obj_set_pos(image, obj->pos.x >> SUBPIXEL_SHIFT, obj->pos.y >> SUBPIXEL_SHIFT);
+    lv_obj_set_size(image, obj->w >> SUBPIXEL_SHIFT, obj->h >> SUBPIXEL_SHIFT);
+    lv_image_set_src(image, obj->sprite);
+    lv_image_set_inner_align(image, LV_IMAGE_ALIGN_TILE);   // Enable tile mosaic
+    obj->image = image;
+  }
 }
 
 void deactivate_game_object(game_object_t* obj) {
@@ -33,6 +36,11 @@ void set_game_object_sprite(game_object_t* obj, const lv_image_dsc_t* sprite) {
 }
 
 bool check_collision(game_object_t* obj1, game_object_t* obj2) {
+  // If either object has been destroyed, it cannot produce collisions
+  if (!obj1->exists || !obj2->exists) {
+    return false;
+  }
+
   // Check if the hitbox's horizontal ranges overlap
   bool is_right_of_left        = obj1->pos.x + obj1->w > obj2->pos.x;
   bool is_left_of_right        = obj1->pos.x < obj2->pos.x + obj2->w;

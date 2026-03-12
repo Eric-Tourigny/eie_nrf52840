@@ -1,6 +1,7 @@
 #include "screen.h"
 #include "player.h"
 #include "screen_info.h"
+#include "coins.h"
 
 /***************************************************************************************************************************************
  * Variables
@@ -33,6 +34,7 @@ void init_screen() {
   lv_obj_remove_flag(game_screen, LV_OBJ_FLAG_SCROLLABLE);                                      // Don't display scroll bars
   activate_screen(STARTING_SCREEN_ROW, STARTING_SCREEN_COL);                                    // Activate the initial screen
   lv_screen_load(game_screen);                                                                  // Put screen on display
+  init_coin_display(game_screen);
 }
 
 void activate_screen(int32_t row, int32_t col) {
